@@ -9,20 +9,15 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
-public class Review {
-    @javax.persistence.Id
+@Getter @Setter @NoArgsConstructor
+public class Customer {
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer Id;
 
-    @NotNull(message="Comment should not be null")
-    private String Comment;
+    @NotNull(message="First name should not be null")
+    private String FirstName;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "product_id")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private Product Product;
+    @NotNull(message="Last name should not be null")
+    private String LastName;
 }
-

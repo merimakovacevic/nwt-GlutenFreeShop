@@ -1,10 +1,11 @@
 package product.microservice.productmicroservice.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
+import javax.validation.constraints.*;
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.List;
@@ -15,15 +16,19 @@ import java.util.UUID;
 @Getter @Setter @NoArgsConstructor
 public class Product {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer Id;
 
+    @NotNull(message="Name should not be null")
     private String Name;
 
+    @NotNull(message="Description should not be null")
     private String Description;
 
+    @NotNull(message="Total rating should not be null")
     private Double TotalRating;
 
+    @NotNull(message="Number of ratings should not be null")
     private Integer NumberOfRatings;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -34,31 +39,10 @@ public class Product {
     @OneToMany(mappedBy = "Product", cascade = CascadeType.ALL)
     private Set<Image> images = new HashSet<>();
 
-    public void setProductType(ProductType productType){
-        this.ProductType = productType;
-    }
+    @OneToMany(mappedBy = "Product", cascade = CascadeType.ALL)
+    private Set<Rating> ratings = new HashSet<>();
 
-    public ProductType getProductType(){
-        return this.ProductType;
-    }
+    @OneToMany(mappedBy = "Product", cascade = CascadeType.ALL)
+    private Set<Review> reviews = new HashSet<>();
 
-   /* public Long getProductTypeId(){
-        return this.ProductType.getId();
-    }
-    */
-
-
-  /*  @ManyToOne
-    @JoinColumn(name="producttype_id")
-    private ProductType ProductType;
-
-    @OneToMany(mappedBy = "ImageProduct")
-    private List<Image> Images;
-
-    @OneToMany(mappedBy = "RatingProduct")
-    private List<Rating> Ratings;
-
-    @OneToMany
-    @JoinColumn(name="id_zanr", referencedColumnName = "id")
-    private List<Review> Reviews; */
 }
