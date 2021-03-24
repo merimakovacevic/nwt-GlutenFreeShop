@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Entity
@@ -14,14 +15,19 @@ public class Product {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
 
-    @Column(nullable = false)
+    @NotBlank(message = "ProductTypeId is mandatory")
     private String productTypeId;
 
-    @Column(nullable = false)
+    @NotBlank(message = "Name is mandatory")
     private String name;
 
     private String totalRating;
     private String reviewsNumber;
+
+    public Product(String productTypeId, String name){
+        this.productTypeId = productTypeId;
+        this.name = name;
+    }
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "product_recipe",
