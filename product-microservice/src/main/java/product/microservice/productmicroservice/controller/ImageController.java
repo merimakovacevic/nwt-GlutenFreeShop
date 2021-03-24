@@ -8,6 +8,7 @@ import product.microservice.productmicroservice.model.Product;
 import product.microservice.productmicroservice.model.ProductType;
 import product.microservice.productmicroservice.repository.ImageRepository;
 import product.microservice.productmicroservice.repository.ProductRepository;
+import product.microservice.productmicroservice.service.ImageService;
 
 import java.util.Optional;
 
@@ -15,40 +16,25 @@ import java.util.Optional;
 @RequestMapping(path="/image")
 public class ImageController {
     @Autowired
-    private ImageRepository imageRepository;
-    @Autowired
-    private ProductRepository productRepository;
+    private ImageService imageService;
 
     @GetMapping(path="/all")
     public Iterable<Image> getAllImages(){
-        return imageRepository.findAll();
+        return imageService.getAll();
     }
 
     @GetMapping(path="/{id}")
     public Image getImageById(@PathVariable Integer id){
-        Optional<Image> image = imageRepository.findById(id);
-        if(image.isEmpty()) throw new ApiRequestException("Image with id " + id + " does not exist!");
-        return image.get();
+        return imageService.getById(id);
     }
 
     @PostMapping(path="/add")
     public @ResponseBody String addNewImage(@RequestBody Image image){
-        if (image.getProduct() == null) throw new ApiRequestException("Product is not assigned");
-        Integer productId = image.getProduct().getId();
-        if (productId == null) throw new ApiRequestException("Product is not assigned");
-        Optional<Product> product = productRepository.findById(productId);
-        if (product.isEmpty()) throw new ApiRequestException("Product with id " + productId + " does not exist!");
-        if (image.getUrl().equals("") || image.getUrl() == null) throw new ApiRequestException("Url is not valid");
-        image.setProduct(product.get());
-        Image savedImage = imageRepository.save(image);
-        return "Saved";
+        return imageService.addNew(image);
     }
 
     @DeleteMapping(path="/{id}")
     public @ResponseBody String deleteImage(@PathVariable Integer id){
-        Optional<Image> image = imageRepository.findById(id);
-        if(image.isEmpty()) throw new ApiRequestException("Image with id " + id + " does not exist!");
-        imageRepository.deleteById(id);
-        return "Deleted";
+        return imageService.deleteImageById(id);
     }
 }

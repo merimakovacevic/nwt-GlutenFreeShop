@@ -7,6 +7,7 @@ import product.microservice.productmicroservice.model.Product;
 import product.microservice.productmicroservice.model.Review;
 import product.microservice.productmicroservice.repository.ProductRepository;
 import product.microservice.productmicroservice.repository.ReviewRepository;
+import product.microservice.productmicroservice.service.ReviewService;
 
 import java.util.Optional;
 
@@ -14,40 +15,25 @@ import java.util.Optional;
 @RequestMapping(path="/review")
 public class ReviewController {
     @Autowired
-    private ReviewRepository reviewRepository;
-    @Autowired
-    private ProductRepository productRepository;
+    private ReviewService reviewService;
 
     @GetMapping(path="/all")
     public Iterable<Review> getAllReviews(){
-        return reviewRepository.findAll();
+        return reviewService.getAll();
     }
 
     @GetMapping(path="/{id}")
     public Review getReviewById(@PathVariable Integer id){
-        Optional<Review> review = reviewRepository.findById(id);
-        if(review.isEmpty()) throw new ApiRequestException("Review with id " + id + " does not exist!");
-        return review.get();
+        return reviewService.getById(id);
     }
 
     @PostMapping(path="/add")
     public @ResponseBody String addNewReview(@RequestBody Review review){
-        if (review.getProduct() == null) throw new ApiRequestException("Product is not assigned");
-        Integer productId = review.getProduct().getId();
-        if (productId == null) throw new ApiRequestException("Product is not assigned");
-        Optional<Product> product = productRepository.findById(productId);
-        if(product.isEmpty()) throw new ApiRequestException("Product with id " + productId + " does not exist!");
-        if (review.getComment().equals("") || review.getComment() == null) throw new ApiRequestException("Comment is not valid");
-        review.setProduct(product.get());
-        reviewRepository.save(review);
-        return "Saved";
+        return reviewService.addNew(review);
     }
 
     @DeleteMapping(path="/{id}")
     public @ResponseBody String deleteReview(@PathVariable Integer id){
-        Optional<Review> review = reviewRepository.findById(id);
-        if(review.isEmpty()) throw new ApiRequestException("Review with id " + id + " does not exist!");
-        reviewRepository.deleteById(id);
-        return "Deleted";
+        return reviewService.deleteReviewById(id);
     }
 }

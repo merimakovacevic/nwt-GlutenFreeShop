@@ -6,6 +6,7 @@ import product.microservice.productmicroservice.exception.ApiRequestException;
 import product.microservice.productmicroservice.model.Product;
 import product.microservice.productmicroservice.model.ProductType;
 import product.microservice.productmicroservice.repository.ProductTypeRepository;
+import product.microservice.productmicroservice.service.ProductTypeService;
 
 import java.util.Optional;
 
@@ -13,24 +14,20 @@ import java.util.Optional;
 @RequestMapping(path="/producttype")
 public class ProductTypeController {
     @Autowired
-    private ProductTypeRepository productTypeRepository;
+    private ProductTypeService productTypeService;
 
     @GetMapping(path="/all")
     public Iterable<ProductType> getAllProductTypes() {
-        return productTypeRepository.findAll();
+        return productTypeService.getAll();
     }
 
     @GetMapping(path="/{id}")
     public ProductType getProductTypeById(@PathVariable Integer id){
-        Optional<ProductType> productType = productTypeRepository.findById(id);
-        if(productType.isEmpty()) throw new ApiRequestException("Product type with id "+ id + " does not exist");
-        return productType.get();
+        return productTypeService.getById(id);
     }
 
     @PostMapping(path="/add")
     public @ResponseBody String addNewProductType(@RequestBody ProductType productType){
-        if (productType.getName().equals("") || productType.getName() == null) throw new ApiRequestException("Name is not valid");
-        productTypeRepository.save(productType);
-        return "Saved";
+        return productTypeService.addNew(productType);
     }
 }
