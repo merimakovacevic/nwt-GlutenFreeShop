@@ -30,4 +30,14 @@ public class ProductTypeController {
     public @ResponseBody String addNewProductType(@RequestBody ProductType productType){
         return productTypeService.addNew(productType);
     }
+
+    @DeleteMapping(path="/{id}")
+    public @ResponseBody String deleteProductType(@PathVariable Integer id){
+        return productTypeService.deleteProductTypeById(id);
+    }
+
+    @PutMapping(path="{id}")
+    public @ResponseBody String updateProductType(@RequestBody ProductType productType, @PathVariable Integer id){
+        return productTypeService.updateProductType(productType, id);
+    }
 }

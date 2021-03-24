@@ -52,5 +52,17 @@ public class ProductService {
         return "Deleted";
     }
 
-
+    public String updateProduct(Product newProduct,Integer id){
+        Integer productId = newProduct.getId();
+        if (productId == null) throw new ApiRequestException("Id in object is not valid!");
+        if (productId != id) throw new ApiRequestException("Id in url is not equal id in object!");
+        if (newProduct.getName() == "" || newProduct.getName() == null) throw new ApiRequestException("Name is not valid!");
+        Product product = productRepository.findById(id).get();
+        product.setName(newProduct.getName());
+        product.setDescription(newProduct.getDescription());
+        product.setNumberOfRatings(newProduct.getNumberOfRatings());
+        product.setTotalRating(newProduct.getTotalRating());
+        productRepository.save(product);
+        return "Updated";
+    }
 }
