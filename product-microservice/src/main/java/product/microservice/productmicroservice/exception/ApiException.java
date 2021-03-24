@@ -9,8 +9,8 @@ public class ApiException {
     private final HttpStatus httpStatus;
     private final ZonedDateTime timestamp;
 
-    public ApiException(String meesage, HttpStatus httpStatus, ZonedDateTime timestamp) {
-        this.message = meesage;
+    public ApiException(String message, HttpStatus httpStatus, ZonedDateTime timestamp) {
+        this.message = message;
         this.httpStatus = httpStatus;
         this.timestamp = timestamp;
     }

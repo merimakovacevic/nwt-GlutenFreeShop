@@ -11,8 +11,10 @@ import product.microservice.productmicroservice.repository.ImageRepository;
 import product.microservice.productmicroservice.repository.ProductRepository;
 import product.microservice.productmicroservice.repository.ProductTypeRepository;
 import product.microservice.productmicroservice.repository.ReviewRepository;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
+@EnableSwagger2
 public class ProductMicroserviceApplication {
 
 	public static void main(String[] args) {
