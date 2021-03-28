@@ -30,6 +30,7 @@ public class CustomerController {
         Optional<Customer> customer = customerRepository.findById(id);
         if (customer.isEmpty()) throw new ApiRequestException("Customer with id " + id + " does not exist");
         return customer.get();
+        
     }
 
     @PostMapping(path="/add")
@@ -37,5 +38,6 @@ public class CustomerController {
     String addNewCustomer(@RequestBody Customer customer){
         Customer c = customerRepository.save(customer);
         return "Saved";
+
     }
 }
