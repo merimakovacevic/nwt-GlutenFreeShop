@@ -13,14 +13,14 @@ import javax.validation.constraints.NotNull;
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer Id;
+    private Integer id;
 
     @NotNull(message="Url should not be null")
-    private String Url;
+    private String url;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "product_id")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private Product Product;
+    private Product product;
 
 }

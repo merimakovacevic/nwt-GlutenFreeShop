@@ -1,18 +1,12 @@
 package product.microservice.productmicroservice.controller;
 
-import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-import product.microservice.productmicroservice.exception.ApiRequestException;
 import product.microservice.productmicroservice.model.Product;
-import product.microservice.productmicroservice.model.ProductType;
-import product.microservice.productmicroservice.repository.ProductRepository;
-import product.microservice.productmicroservice.repository.ProductTypeRepository;
 import product.microservice.productmicroservice.service.ProductService;
 
-import java.util.Optional;
+import java.util.List;
+
 
 @RestController
 @RequestMapping(path="/product")
@@ -46,5 +40,23 @@ public class ProductController {
     public @ResponseBody String updateProduct(@RequestBody Product product, @PathVariable Integer id){
         return productService.updateProduct(product, id);
 
+    }
+
+    @GetMapping(path="/product/{name}")
+    public @ResponseBody
+    List<Product> getProductsByName(@PathVariable String name){
+        return productService.findProductsByName(name);
+    }
+
+    @GetMapping(path="/producttype/{id}")
+    public @ResponseBody
+    Iterable<Product> getProductsByProductType(@PathVariable Integer id){
+        return productService.findProductsByProductType(id);
+    }
+
+    @GetMapping(path="/producttypename/{name}")
+    public @ResponseBody
+    Iterable<Product> getProductsByProductType(@PathVariable String name){
+        return productService.findProductsByProductTypeName(name);
     }
 }
