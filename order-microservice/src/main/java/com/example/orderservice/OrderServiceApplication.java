@@ -44,11 +44,11 @@ class DemoCommandLineRunner implements CommandLineRunner {
 		userRepository.save(user);
 
 		Product product = new Product();
-		product.setPrice(287L);
+		product.setPrice(789456L);
 		productRepository.save(product);
 
 		Item item = new Item();
-		item.setAmount(77);
+		item.setAmount(77777);
 		itemRepository.save(item);
 
 		Order order = new Order();

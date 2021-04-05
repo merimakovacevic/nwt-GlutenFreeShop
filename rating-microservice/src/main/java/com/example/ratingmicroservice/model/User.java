@@ -1,18 +1,20 @@
 package com.example.ratingmicroservice.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Data
 @Entity
 @Table(name = "user")
+@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue
     private Long id;
+
+    public User(Long id) {
+        this.id = id;
+    }
 }
