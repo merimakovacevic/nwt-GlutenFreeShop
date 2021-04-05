@@ -12,9 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.Date;
 
@@ -42,20 +40,20 @@ class DemoCommandLineRunner implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
-		User user1 = userRepository.save(new User());
-		User user2 = userRepository.save(new User());
-		User user3 = userRepository.save(new User());
-
-		Product product1 = productRepository.save(new Product());
-		Product product2 = productRepository.save(new Product());
-		Product product3 = productRepository.save(new Product());
-
-		ratingRepository.save(new Rating(product1, user1, 3));
-		ratingRepository.save(new Rating(product2, user2, 4));
-		ratingRepository.save(new Rating(product3, user3, 5));
-
-		reviewRepository.save(new Review(product1, user1, "Comment1", new Date()));
-		reviewRepository.save(new Review(product2, user2, "Comment2", new Date()));
-		reviewRepository.save(new Review(product3, user3, "Comment3", new Date()));
+//		User user1 = userRepository.save(new User());
+//		User user2 = userRepository.save(new User());
+//		User user3 = userRepository.save(new User());
+//
+//		Product product1 = productRepository.save(new Product());
+//		Product product2 = productRepository.save(new Product());
+//		Product product3 = productRepository.save(new Product());
+//
+//		ratingRepository.save(new Rating(product1, user1, 3));
+//		ratingRepository.save(new Rating(product2, user2, 4));
+//		ratingRepository.save(new Rating(product3, user3, 5));
+//
+//		reviewRepository.save(new Review(product1, user1, "Comment1", new Date()));
+//		reviewRepository.save(new Review(product2, user2, "Comment2", new Date()));
+//		reviewRepository.save(new Review(product3, user3, "Comment3", new Date()));
 	}
 }
