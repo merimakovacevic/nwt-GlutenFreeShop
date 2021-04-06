@@ -16,12 +16,16 @@ import java.util.UUID;
 public class ProductType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer Id;
+    private Integer id;
 
     @NotNull(message="Name should not be null")
-    private String Name;
+    private String name;
 
-    @OneToMany(mappedBy = "ProductType", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "productType", cascade = CascadeType.ALL)
     private List<Product> products;
+
+    public ProductType(String Name){
+        name=Name;
+    }
 
 }

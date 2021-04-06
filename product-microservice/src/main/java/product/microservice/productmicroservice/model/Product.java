@@ -17,32 +17,40 @@ import java.util.UUID;
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer Id;
+    private Integer id;
 
     @NotNull(message="Name should not be null")
-    private String Name;
+    private String name;
 
     @NotNull(message="Description should not be null")
-    private String Description;
+    private String description;
 
     @NotNull(message="Total rating should not be null")
-    private Double TotalRating;
+    private Double totalRating;
 
     @NotNull(message="Number of ratings should not be null")
-    private Integer NumberOfRatings;
+    private Integer numberOfRatings;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "producttype_id")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private ProductType ProductType;
+    private ProductType productType;
 
-    @OneToMany(mappedBy = "Product", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private Set<Image> images = new HashSet<>();
 
-    @OneToMany(mappedBy = "Product", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private Set<Rating> ratings = new HashSet<>();
 
-    @OneToMany(mappedBy = "Product", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private Set<Review> reviews = new HashSet<>();
+
+    public Product(String Name, String Description, Double Rating, Integer NumberOfRatings, ProductType ProductType){
+        name=Name;
+        description=Description;
+        totalRating=Rating;
+        numberOfRatings=NumberOfRatings;
+        productType=ProductType;
+    }
 
 }

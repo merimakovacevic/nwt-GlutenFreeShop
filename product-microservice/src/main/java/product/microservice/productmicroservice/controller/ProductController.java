@@ -12,6 +12,7 @@ import product.microservice.productmicroservice.repository.ProductRepository;
 import product.microservice.productmicroservice.repository.ProductTypeRepository;
 import product.microservice.productmicroservice.service.ProductService;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -43,5 +44,23 @@ public class ProductController {
     @PutMapping(path="/{id}")
     public @ResponseBody String updateProduct(@RequestBody Product product, @PathVariable Integer id){
         return productService.updateProduct(product, id);
+    }
+
+    @GetMapping(path="/product/{name}")
+    public @ResponseBody
+    List<Product> getProductsByName(@PathVariable String name){
+        return productService.findProductsByName(name);
+    }
+
+    @GetMapping(path="/producttype/{id}")
+    public @ResponseBody
+    Iterable<Product> getProductsByProductType(@PathVariable Integer id){
+        return productService.findProductsByProductType(id);
+    }
+
+    @GetMapping(path="/producttypename/{name}")
+    public @ResponseBody
+    Iterable<Product> getProductsByProductType(@PathVariable String name){
+        return productService.findProductsByProductTypeName(name);
     }
 }

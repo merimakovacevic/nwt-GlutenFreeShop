@@ -15,14 +15,14 @@ import javax.validation.constraints.NotNull;
 public class Review {
     @javax.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer Id;
+    private Integer id;
 
     @NotNull(message="Comment should not be null")
-    private String Comment;
+    private String comment;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "product_id")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private Product Product;
+    private Product product;
 }
 

@@ -11,6 +11,7 @@ import product.microservice.productmicroservice.model.ProductType;
 import product.microservice.productmicroservice.repository.ProductRepository;
 import product.microservice.productmicroservice.repository.ProductTypeRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -64,5 +65,23 @@ public class ProductService {
         product.setTotalRating(newProduct.getTotalRating());
         productRepository.save(product);
         return "Updated";
+    }
+
+    public List<Product> findProductsByName(String name){
+        List<Product> products = productRepository.findByName(name);
+        if (products.isEmpty()) throw new ApiRequestException("There are no products with name "+name);
+        return products;
+    }
+
+    public Iterable<Product> findProductsByProductType(Integer id){
+        List<Product> products = productRepository.findByProductTypeId(id);
+        if (products.isEmpty()) throw new ApiRequestException("Product with id "+id+" does not exist");
+        return products;
+    }
+
+    public Iterable<Product> findProductsByProductTypeName(String name){
+        List<Product> types = productRepository.findByProductTypeName(name);
+        if (types.isEmpty()) throw new ApiRequestException("There are no product types with name "+name);
+        return types;
     }
 }

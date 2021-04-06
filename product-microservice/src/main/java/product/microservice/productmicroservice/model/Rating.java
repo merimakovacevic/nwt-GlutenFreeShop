@@ -13,13 +13,13 @@ import javax.validation.constraints.NotNull;
 public class Rating {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer Id;
+    private Integer id;
 
     @NotNull(message="Rating number should not be null")
-    private Integer RatingNumber;
+    private Integer ratingNumber;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "product_id")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private Product Product;
+    private Product product;
 }
