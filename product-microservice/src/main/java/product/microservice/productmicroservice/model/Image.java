@@ -6,19 +6,21 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Getter @Setter @NoArgsConstructor
 public class Image {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer Id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-    private String Url;
+    @NotNull(message="Url should not be null")
+    private String url;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "product_id")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private Product Product;
+    private Product product;
 
 }

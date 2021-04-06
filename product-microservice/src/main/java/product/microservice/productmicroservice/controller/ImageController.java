@@ -2,11 +2,13 @@ package product.microservice.productmicroservice.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import product.microservice.productmicroservice.exception.ApiRequestException;
 import product.microservice.productmicroservice.model.Image;
 import product.microservice.productmicroservice.model.Product;
 import product.microservice.productmicroservice.model.ProductType;
 import product.microservice.productmicroservice.repository.ImageRepository;
 import product.microservice.productmicroservice.repository.ProductRepository;
+import product.microservice.productmicroservice.service.ImageService;
 
 import java.util.Optional;
 
@@ -14,20 +16,25 @@ import java.util.Optional;
 @RequestMapping(path="/image")
 public class ImageController {
     @Autowired
-    private ImageRepository imageRepository;
-    @Autowired
-    private ProductRepository productRepository;
+    private ImageService imageService;
 
     @GetMapping(path="/all")
     public Iterable<Image> getAllImages(){
-        return imageRepository.findAll();
+        return imageService.getAll();
+    }
+
+    @GetMapping(path="/{id}")
+    public Image getImageById(@PathVariable Integer id){
+        return imageService.getById(id);
     }
 
     @PostMapping(path="/add")
     public @ResponseBody String addNewImage(@RequestBody Image image){
-        Optional<Product> optionalProduct = productRepository.findById(image.getProduct().getId());
-        image.setProduct(optionalProduct.get());
-        Image savedImage = imageRepository.save(image);
-        return "Saved";
+        return imageService.addNew(image);
+    }
+
+    @DeleteMapping(path="/{id}")
+    public @ResponseBody String deleteImage(@PathVariable Integer id){
+        return imageService.deleteImageById(id);
     }
 }

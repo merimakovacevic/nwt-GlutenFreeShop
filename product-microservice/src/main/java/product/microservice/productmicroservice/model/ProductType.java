@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -14,12 +15,17 @@ import java.util.UUID;
 @Getter @Setter @NoArgsConstructor
 public class ProductType {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer Id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-    private String Name;
+    @NotNull(message="Name should not be null")
+    private String name;
 
-    @OneToMany(mappedBy = "ProductType", cascade = CascadeType.ALL)
-    private Set<Product> products = new HashSet<>();
+    @OneToMany(mappedBy = "productType", cascade = CascadeType.ALL)
+    private List<Product> products;
+
+    public ProductType(String Name){
+        name=Name;
+    }
 
 }
