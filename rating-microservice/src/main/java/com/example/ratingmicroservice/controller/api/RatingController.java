@@ -1,16 +1,15 @@
 package com.example.ratingmicroservice.controller.api;
 
+import com.example.ratingmicroservice.controller.response.RestResponse;
 import com.example.ratingmicroservice.dto.model.AverageRatingDto;
 import com.example.ratingmicroservice.dto.model.RatingDto;
-import com.example.ratingmicroservice.controller.response.RestResponse;
 import com.example.ratingmicroservice.service.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
-
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -68,5 +67,13 @@ public class RatingController {
                 .status(HttpStatus.OK)
                 .message("Rating successfully deleted.")
                 .entity();
+    }
+
+    @Value("${message}")
+    private String message;
+
+    @RequestMapping("/port")
+    public String hello() {
+        return "Using [" + message + "] from config server";
     }
 }
