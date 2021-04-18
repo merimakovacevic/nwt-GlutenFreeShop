@@ -1,12 +1,18 @@
 spring:
+  application:
+    name: OrderService
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost/OrderDB
+    url: jdbc:mysql://localhost:3307/OrderDB
     username: root
-    password:
+    password: root
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5Dialect
+
+
+server:
+  port: 8085
