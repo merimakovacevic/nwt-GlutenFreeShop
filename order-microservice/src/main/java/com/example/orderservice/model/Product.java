@@ -1,14 +1,17 @@
 package com.example.orderservice.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "product", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "id") })
+@Table(name = "products")
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class Product implements Serializable {
     @Id
@@ -34,4 +37,9 @@ public class Product implements Serializable {
 //    public double getPrice() {
 //        return this.price;
 //    }
+
+
+    public Product(double price) {
+        this.price = price;
+    }
 }

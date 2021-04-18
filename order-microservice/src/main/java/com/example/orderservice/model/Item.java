@@ -10,8 +10,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table(name = "item", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "id") })
+@Table(name = "items")
 public class Item {
 
     @Id
@@ -25,4 +24,8 @@ public class Item {
 
     @ManyToOne
     private Order order;
+
+    public Item(int amount) {
+        this.amount = amount;
+    }
 }
