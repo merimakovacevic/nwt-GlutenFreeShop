@@ -9,6 +9,8 @@ spring:
         bootstrap: true
         git:
           uri: https://github.com/merimakovacevic/nwt-GlutenFreeShop.git
+          username: gluten-free-shop-config-server
+          password: SelmaMedinaMerimaMaida
           force-pull: true
           default-label: central-config
 eureka:

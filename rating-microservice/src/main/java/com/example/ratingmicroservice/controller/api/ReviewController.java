@@ -5,6 +5,7 @@ import com.example.ratingmicroservice.controller.response.RestResponse;
 import com.example.ratingmicroservice.model.Review;
 import com.example.ratingmicroservice.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +25,7 @@ public class ReviewController {
     @ResponseBody
     public ResponseEntity<?> getReview(@Valid @RequestParam(value = "productId") @NotEmpty Long productId) {
 
-        List<Review> reviews = reviewService.findAllByProductId(productId);
+        List<ReviewDto> reviews = reviewService.findAllByProductId(productId);
         return RestResponse.builder()
                 .status(HttpStatus.OK)
                 .result(reviews)

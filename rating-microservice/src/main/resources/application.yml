@@ -25,3 +25,8 @@ eureka:
     fetchRegistry: true
   instance:
     preferIpAddress: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

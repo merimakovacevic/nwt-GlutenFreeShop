@@ -21,7 +21,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 
-@RefreshScope
 @EnableEurekaClient
 @SpringBootApplication
 public class RatingMicroserviceApplication {
