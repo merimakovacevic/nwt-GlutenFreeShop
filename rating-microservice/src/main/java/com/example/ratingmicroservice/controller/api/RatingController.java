@@ -1,16 +1,16 @@
 package com.example.ratingmicroservice.controller.api;
 
+import com.example.ratingmicroservice.controller.response.RestResponse;
 import com.example.ratingmicroservice.dto.model.AverageRatingDto;
 import com.example.ratingmicroservice.dto.model.RatingDto;
-import com.example.ratingmicroservice.controller.response.RestResponse;
 import com.example.ratingmicroservice.service.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
-
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -18,6 +18,7 @@ import java.util.Optional;
 
 @RestController
 @Validated
+@RefreshScope
 public class RatingController {
 
     @Autowired
@@ -60,7 +61,7 @@ public class RatingController {
 
     @DeleteMapping(value = "/rating/delete", produces = "application/json")
     public ResponseEntity<?> deleteRating(
-            @RequestParam @NotNull(message = "Param productId cannot be empty.")  Long productId,
+            @RequestParam @NotNull(message = "Param productId cannot be empty.") Long productId,
             @RequestParam @NotNull(message = "Param userId cannot be empty.") Long userId) {
 
         ratingService.deleteRating(productId, userId);
@@ -68,5 +69,18 @@ public class RatingController {
                 .status(HttpStatus.OK)
                 .message("Rating successfully deleted.")
                 .entity();
+    }
+
+    /**
+     * message mi je dio iz konfiguracije koji se nalazi na gitu
+     * Sa anotacijom @Value mogu da pokupim neki property iz konfiga (bilo da se nalazi u application.properties fajlu
+     * ili na git repozitoriju (config serveru)
+     **/
+    @Value("${message}")
+    private String message;
+
+    @RequestMapping("/greeting")
+    public String hello() {
+        return message;
     }
 }

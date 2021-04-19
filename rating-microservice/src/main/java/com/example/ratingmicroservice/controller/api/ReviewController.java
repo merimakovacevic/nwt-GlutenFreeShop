@@ -2,8 +2,10 @@ package com.example.ratingmicroservice.controller.api;
 
 import com.example.ratingmicroservice.dto.model.ReviewDto;
 import com.example.ratingmicroservice.controller.response.RestResponse;
+import com.example.ratingmicroservice.model.Review;
 import com.example.ratingmicroservice.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

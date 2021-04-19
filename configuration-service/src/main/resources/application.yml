@@ -1,0 +1,24 @@
+server:
+  port: 8888
+spring:
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        bootstrap: true
+        git:
+          uri: https://github.com/merimakovacevic/nwt-GlutenFreeShop.git
+          username: gluten-free-shop-config-server
+          password: SelmaMedinaMerimaMaida
+          force-pull: true
+          default-label: central-config
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    registerWithEureka: true
+    fetchRegistry: true
+  instance:
+    preferIpAddress: true
+
