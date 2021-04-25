@@ -3,9 +3,9 @@ spring:
     name: rating-microservice
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost/RatingDB
+    url: jdbc:mysql://localhost:3307/RatingDB
     username: root
-    password:
+    password: root
   jpa:
     hibernate:
       ddl-auto: update
@@ -25,6 +25,7 @@ eureka:
     fetchRegistry: true
   instance:
     preferIpAddress: true
+    hostname: localhost
 management:
   endpoints:
     web:

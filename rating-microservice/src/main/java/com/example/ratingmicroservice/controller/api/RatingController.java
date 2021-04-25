@@ -3,6 +3,7 @@ package com.example.ratingmicroservice.controller.api;
 import com.example.ratingmicroservice.controller.response.RestResponse;
 import com.example.ratingmicroservice.dto.model.AverageRatingDto;
 import com.example.ratingmicroservice.dto.model.RatingDto;
+import com.example.ratingmicroservice.model.Rating;
 import com.example.ratingmicroservice.service.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -69,6 +71,12 @@ public class RatingController {
                 .status(HttpStatus.OK)
                 .message("Rating successfully deleted.")
                 .entity();
+    }
+
+    @GetMapping(value = "/rating", produces = "application/json")
+    public ResponseEntity<?> getAllRatings() {
+        List<Rating> ratings = ratingService.findAll();
+        return new ResponseEntity<>(ratings, HttpStatus.CREATED);
     }
 
     /**
