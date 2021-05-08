@@ -2,9 +2,10 @@ package product.microservice.productmicroservice.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import io.swagger.annotations.ApiModel;
+import lombok.*;
+import lombok.experimental.Accessors;
+
 import javax.validation.constraints.*;
 import javax.persistence.*;
 import java.util.HashSet;
@@ -13,7 +14,11 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Getter @Setter @NoArgsConstructor
+@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@Accessors(chain = true)
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,12 +30,6 @@ public class Product {
     @NotNull(message="Description should not be null")
     private String description;
 
-    @NotNull(message="Total rating should not be null")
-    private Double totalRating;
-
-    @NotNull(message="Number of ratings should not be null")
-    private Integer numberOfRatings;
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "producttype_id")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -39,18 +38,10 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private Set<Image> images = new HashSet<>();
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private Set<Rating> ratings = new HashSet<>();
-
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private Set<Review> reviews = new HashSet<>();
-
-    public Product(String Name, String Description, Double Rating, Integer NumberOfRatings, ProductType ProductType){
-        name=Name;
-        description=Description;
-        totalRating=Rating;
-        numberOfRatings=NumberOfRatings;
-        productType=ProductType;
+    public Product(String name, String description, ProductType productType, Set<Image> images){
+        this.name = name;
+        this.description = description;
+        this.productType = productType;
+        this.images = images;
     }
-
 }

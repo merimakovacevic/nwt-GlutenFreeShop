@@ -31,8 +31,8 @@ public class ProductController {
         return productService.addNew(product);
     }
 
-    @GetMapping(path="/{id}")
-    public Product getProductById (@PathVariable Integer id){
+    @GetMapping(path="/get")
+    public Product getProductById (@RequestParam(name = "productId") Integer id){
         return productService.getById(id);
     }
 

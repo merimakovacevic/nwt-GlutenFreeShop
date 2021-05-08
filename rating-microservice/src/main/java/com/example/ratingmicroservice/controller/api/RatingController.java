@@ -7,13 +7,17 @@ import com.example.ratingmicroservice.service.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -24,11 +28,14 @@ public class RatingController {
     @Autowired
     private RatingService ratingService;
 
+    @Autowired
+    RestTemplate restTemplate = new RestTemplate();
+
     @GetMapping(value = "/rating/get", produces = "application/json")
     @ResponseBody
     public ResponseEntity<?> getRating(
             @RequestParam @NotNull(message = "Param productId cannot be empty.") Long productId,
-            @RequestParam @NotNull(message = "Param userId cannot be empty.") Long userId) {
+            @RequestParam @NotNull(message = "Param userId cannot be empty.") Long userId) throws Exception {
 
         Optional<AverageRatingDto> rating = ratingService.getRatingOfProduct(productId, userId);
         return RestResponse.builder()

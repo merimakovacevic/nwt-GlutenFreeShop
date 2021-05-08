@@ -4,6 +4,7 @@ import com.example.ratingmicroservice.dto.mapper.Mapper;
 import com.example.ratingmicroservice.dto.model.AverageRatingDto;
 import com.example.ratingmicroservice.dto.model.RatingDto;
 import com.example.ratingmicroservice.exception.RestResponseException;
+import com.example.ratingmicroservice.interfaces.ProductClient;
 import com.example.ratingmicroservice.model.Product;
 import com.example.ratingmicroservice.model.Rating;
 import com.example.ratingmicroservice.model.User;
@@ -12,6 +13,7 @@ import com.example.ratingmicroservice.repository.RatingRepository;
 import com.example.ratingmicroservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,8 +33,12 @@ public class RatingService {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    ProductClient productClient;
+
     private Double getAverageRatingOfProduct(Long productId) {
         Optional<Product> product = productRepository.findById(productId);
+
         if (product.isPresent()) {
             List<Rating> ratings = ratingRepository.findAllByProductId(productId);
             Double ratingsSum = Double.valueOf(0);
@@ -46,8 +52,10 @@ public class RatingService {
         throw new RestResponseException(HttpStatus.NOT_FOUND, PRODUCT);
     }
 
-    public Optional<AverageRatingDto> getRatingOfProduct(Long productId, Long userId) throws RestResponseException {
+    public Optional<AverageRatingDto> getRatingOfProduct(Long productId, Long userId) throws Exception {
         Optional<Product> product = productRepository.findById(productId);
+        Boolean test = productClient.isProductPresent(productId);
+
         if (product.isPresent()) {
             Optional<User> user = userRepository.findById(userId);
             if (user.isPresent()) {
