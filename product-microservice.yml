@@ -1,4 +1,29 @@
 server:
-  port:
-    8082
-message: Hello from product microservice!
+  port: 8082
+
+spring:
+  application:
+    name: product-microservice
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: on_trace_param
+    include-exception: false
+    
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    registerWithEureka: true
+    fetchRegistry: true
+  instance:
+    preferIpAddress: true
+    
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+        
+message: Update Hello from Product service!!!
+
