@@ -17,16 +17,6 @@ import org.springframework.web.client.RestTemplate;
 @EnableEurekaClient
 @SpringBootApplication
 public class RatingMicroserviceApplication {
-	@Bean
-	@LoadBalanced
-	//Radi service discovery i load balancing, ovim govorim Rest Templateu da ne ide na server
-	//direktno nego treba otici na eureka server pa provjeriti lokaciju servisa, i onda otici na taj servis
-	//Znaci, svaki put ce pitati eureku, a nece zvati direktno servis
-	//Kad posaljemo url Rest Templatu, to ce njemu biti samo hint da zna koji servis treba da zove
-	public RestTemplate getRestTemplate() {
-		return new RestTemplate();
-	}
-
 	public static void main(String[] args) {
 		SpringApplication.run(RatingMicroserviceApplication.class, args);
 	}

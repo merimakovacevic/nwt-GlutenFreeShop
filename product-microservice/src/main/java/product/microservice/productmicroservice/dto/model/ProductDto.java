@@ -1,12 +1,10 @@
-package product.microservice.productmicroservice.dto;
+package product.microservice.productmicroservice.dto.model;
 
 import io.swagger.annotations.ApiModel;
 import lombok.*;
 import lombok.experimental.Accessors;
-import product.microservice.productmicroservice.model.Image;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @Getter
 @Setter
@@ -15,6 +13,7 @@ import java.util.Set;
 @ToString
 @Builder
 @ApiModel
+@AllArgsConstructor
 public class ProductDto {
     private Integer id;
 
@@ -24,5 +23,5 @@ public class ProductDto {
 
     private String productTypeName;
 
-    private Set<Image> images = new HashSet<>();
+    private List<String> urls;
 }

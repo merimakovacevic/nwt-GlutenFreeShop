@@ -1,4 +1,4 @@
-package product.microservice.productmicroservice.controller;
+package product.microservice.productmicroservice.controller.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -8,11 +8,13 @@ import product.microservice.productmicroservice.model.Review;
 import product.microservice.productmicroservice.repository.ProductRepository;
 import product.microservice.productmicroservice.repository.ReviewRepository;
 import product.microservice.productmicroservice.service.ReviewService;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.Optional;
 
 @RestController
 @RequestMapping(path="/review")
+@ApiIgnore
 public class ReviewController {
     @Autowired
     private ReviewService reviewService;

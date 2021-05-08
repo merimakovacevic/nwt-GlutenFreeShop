@@ -1,4 +1,4 @@
-package product.microservice.productmicroservice.controller;
+package product.microservice.productmicroservice.controller.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -8,12 +8,14 @@ import product.microservice.productmicroservice.model.Rating;
 import product.microservice.productmicroservice.repository.ProductRepository;
 import product.microservice.productmicroservice.repository.RatingRepository;
 import product.microservice.productmicroservice.service.RatingService;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @RestController
 @RequestMapping(path="/rating")
+@ApiIgnore
 public class RatingController {
     @Autowired
     private RatingService ratingService;
