@@ -1,5 +1,9 @@
 package com.example.orderservice.controller;
 
+import com.example.orderservice.controller.dto.OrderRatingDto;
+import com.example.orderservice.controller.dto.OrderRatingItem;
+import com.example.orderservice.interfaces.RatingClient;
+import com.example.orderservice.interfaces.dto.rating.RatingDto;
 import com.example.orderservice.model.Order;
 import com.example.orderservice.service.ItemService;
 import com.example.orderservice.service.OrderService;
@@ -16,10 +20,15 @@ import java.util.Optional;
 @RestController
 public class OrderController {
 
-    @Autowired
-    OrderService orderService;
-    @Autowired
-    ItemService itemService;
+    private final OrderService orderService;
+    private final ItemService itemService;
+    private final RatingClient ratingClient;
+
+    public OrderController(OrderService orderService, ItemService itemService, RatingClient ratingClient) {
+        this.orderService = orderService;
+        this.itemService = itemService;
+        this.ratingClient = ratingClient;
+    }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/order/create", consumes = "application/json")
@@ -46,5 +55,12 @@ public class OrderController {
     @GetMapping(value = "/order/by-user/{userId}")
     public List<Order> getAllOrdersByUser(@PathVariable Long userId) {
         return orderService.findAllOrdersByUser(userId);
+    }
+
+    @PostMapping(value = "/order/rate")
+    public void rateOrder(@Valid @RequestBody OrderRatingDto orderRatingDto) {
+        for (OrderRatingItem ratingItem : orderRatingDto.getRatingItems()) {
+            ratingClient.addRating(new RatingDto(ratingItem.getProductId(), orderRatingDto.getUserId(), ratingItem.getRating()));
+        }
     }
 }

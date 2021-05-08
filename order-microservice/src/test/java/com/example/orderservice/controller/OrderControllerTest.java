@@ -1,30 +1,31 @@
 package com.example.orderservice.controller;
 
+import com.example.orderservice.controller.dto.OrderRatingDto;
+import com.example.orderservice.controller.dto.OrderRatingItem;
 import com.example.orderservice.model.Order;
 import com.example.orderservice.model.User;
-import com.example.orderservice.repository.OrderRepository;
 import com.example.orderservice.service.OrderService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Data;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.hasValue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.willThrow;
@@ -43,6 +44,9 @@ public class OrderControllerTest {
     ObjectMapper objectMapper;
     @MockBean
     private OrderService orderService;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
 
     public static String asJsonString(final Object obj) {
@@ -247,6 +251,67 @@ public class OrderControllerTest {
     }
 
 
+    @Test
+    public void givenValidOrderRatingDto_ExpectRatingsRetrievedFromRatingService() throws Exception {
+
+        List<OrderRatingItem> ratingItems = List.of(
+                new OrderRatingItem(1L, 1),
+                new OrderRatingItem(2L, 2)
+        );
+
+        OrderRatingDto orderRatingDto = new OrderRatingDto(1L, ratingItems);
+
+
+        mockMvc.perform(
+                post("/order/rate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(orderRatingDto)));
+
+
+        RatingDTO[] ratingDto = restTemplate.getForObject("http://rating-microservice/rating", RatingDTO[].class);
+
+        boolean foundFirst = false;
+        boolean foundSecond = false;
+
+        assertNotNull(ratingDto);
+
+        for (RatingDTO ratingDTO : ratingDto) {
+            if (ratingDTO.getProduct().getId() == 1L && ratingDTO.getRate() == 1 && ratingDTO.getUser().getId() == 1L) {
+                foundFirst = true;
+            }
+
+            if (ratingDTO.getProduct().getId() == 2L && ratingDTO.getRate() == 2 && ratingDTO.getUser().getId() == 1L) {
+                foundSecond = true;
+            }
+        }
+
+        assertTrue(foundFirst);
+        assertTrue(foundSecond);
+
+    }
+
+    @Test
+    public void giveEmptyRatingDto_ExpectBadRequestException() throws Exception {
+        List<OrderRatingItem> ratingItems = new ArrayList<>(); // prazna lista
+
+        OrderRatingDto orderRatingDto = new OrderRatingDto(1L, ratingItems);
+
+
+
+        mockMvc.perform(
+                post("/order/rate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(orderRatingDto)))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+
+                .andExpect(jsonPath("$.message").value("Rating items list must contain at least one element"))
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"));
+
+    }
+
+
+
 //    @Test
 //    public void givenNoRatingForArguments_whenGetRating_thenNotFound() throws Exception {
 //        when(orderService.getRatingOfProduct(1L, 1L)).thenReturn(Optional.empty());
@@ -389,4 +454,23 @@ public class OrderControllerTest {
 //                .andExpect(status().isOk())
 //                .andExpect(jsonPath("$.message").value("Rating successfully deleted."));
 //    }
+}
+
+
+@Data
+class RatingDTO {
+    private Long id;
+    private ProductFromRatingService product;
+    private UserFromRatingService user;
+    private Integer rate;
+}
+
+@Data
+class ProductFromRatingService {
+    private Long id;
+}
+
+@Data
+class UserFromRatingService {
+    private Long id;
 }

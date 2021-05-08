@@ -112,4 +112,8 @@ public class RatingService {
             } else throw new RestResponseException(HttpStatus.NOT_FOUND, PRODUCT);
         } else throw new RestResponseException(HttpStatus.NOT_FOUND, USER);
     }
+
+    public List<Rating> findAll() {
+        return ratingRepository.findAll();
+    }
 }
