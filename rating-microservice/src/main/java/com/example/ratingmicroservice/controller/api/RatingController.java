@@ -34,7 +34,7 @@ public class RatingController {
     @ResponseBody
     public ResponseEntity<?> getRating(
             @RequestParam @NotNull(message = "Param productId cannot be empty.") Long productId,
-            @RequestParam @NotNull(message = "Param userId cannot be empty.") Long userId) {
+            @RequestParam @NotNull(message = "Param userId cannot be empty.") Long userId) throws Exception {
 
         Optional<AverageRatingDto> rating = ratingService.getRatingOfProduct(productId, userId);
         grpcClientService.sendSystemEvent("Get rating by userId and productId", "READ", "Test User");
