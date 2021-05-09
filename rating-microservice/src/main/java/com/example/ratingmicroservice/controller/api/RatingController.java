@@ -3,6 +3,8 @@ package com.example.ratingmicroservice.controller.api;
 import com.example.ratingmicroservice.controller.response.RestResponse;
 import com.example.ratingmicroservice.dto.model.AverageRatingDto;
 import com.example.ratingmicroservice.dto.model.RatingDto;
+import com.example.ratingmicroservice.grpc.GRPCClientService;
+import com.example.ratingmicroservice.model.Rating;
 import com.example.ratingmicroservice.service.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,10 +13,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -26,7 +28,7 @@ public class RatingController {
     private RatingService ratingService;
 
     @Autowired
-    RestTemplate restTemplate = new RestTemplate();
+    private GRPCClientService grpcClientService;
 
     @GetMapping(value = "/rating/get", produces = "application/json")
     @ResponseBody
@@ -35,6 +37,7 @@ public class RatingController {
             @RequestParam @NotNull(message = "Param userId cannot be empty.") Long userId) throws Exception {
 
         Optional<AverageRatingDto> rating = ratingService.getRatingOfProduct(productId, userId);
+        grpcClientService.sendSystemEvent("Get rating by userId and productId", "READ", "Test User");
         return RestResponse.builder()
                 .status(HttpStatus.OK)
                 .result(rating.get())
@@ -46,6 +49,7 @@ public class RatingController {
     public ResponseEntity<?> addRating(@Valid @RequestBody RatingDto ratingDto) {
 
         ratingService.addRating(ratingDto);
+        grpcClientService.sendSystemEvent("Create rating", "INSERT", "Test User");
         return RestResponse.builder()
                 .status(HttpStatus.OK)
                 .message("Rating successfully saved.")
@@ -57,6 +61,7 @@ public class RatingController {
     public ResponseEntity<?> updateRating(@Valid @RequestBody RatingDto ratingDto) {
 
         ratingService.updateRating(ratingDto);
+        grpcClientService.sendSystemEvent("Update rating", "UPDATE", "Test User");
         return RestResponse.builder()
                 .status(HttpStatus.OK)
                 .message("Rating successfully updated.")
@@ -69,10 +74,18 @@ public class RatingController {
             @RequestParam @NotNull(message = "Param userId cannot be empty.") Long userId) {
 
         ratingService.deleteRating(productId, userId);
+        grpcClientService.sendSystemEvent("Delete rating by productId and userId", "DELETE", "Test User");
         return RestResponse.builder()
                 .status(HttpStatus.OK)
                 .message("Rating successfully deleted.")
                 .entity();
+    }
+
+    @GetMapping(value = "/rating", produces = "application/json")
+    public ResponseEntity<?> getAllRatings() {
+        List<Rating> ratings = ratingService.findAll();
+        grpcClientService.sendSystemEvent("Get all ratings", "READ", "Test User");
+        return new ResponseEntity<>(ratings, HttpStatus.CREATED);
     }
 
     /**
