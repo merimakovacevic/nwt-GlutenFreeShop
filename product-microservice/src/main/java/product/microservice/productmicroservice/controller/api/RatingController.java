@@ -26,7 +26,7 @@ public class RatingController {
     }
 
     @GetMapping(path="/{id}")
-    public Rating getRatingById(@PathVariable Integer id){
+    public Rating getRatingById(@PathVariable Long id){
         return ratingService.getById(id);
     }
 
@@ -36,7 +36,7 @@ public class RatingController {
     }
 
     @DeleteMapping(path="/{id}")
-    public @ResponseBody String deleteRating(@PathVariable Integer id){
+    public @ResponseBody String deleteRating(@PathVariable Long id){
         return ratingService.deleteRatingById(id);
     }
 }

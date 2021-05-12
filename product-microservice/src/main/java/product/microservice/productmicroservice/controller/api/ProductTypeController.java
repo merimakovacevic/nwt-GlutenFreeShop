@@ -22,7 +22,7 @@ public class ProductTypeController {
     }
 
     @GetMapping(path="/{id}")
-    public ProductType getProductTypeById(@PathVariable Integer id){
+    public ProductType getProductTypeById(@PathVariable Long id){
         return productTypeService.getById(id);
     }
 
@@ -32,12 +32,12 @@ public class ProductTypeController {
     }
 
     @DeleteMapping(path="/{id}")
-    public @ResponseBody String deleteProductType(@PathVariable Integer id){
+    public @ResponseBody String deleteProductType(@PathVariable Long id){
         return productTypeService.deleteProductTypeById(id);
     }
 
     @PutMapping(path="{id}")
-    public @ResponseBody String updateProductType(@RequestBody ProductType productType, @PathVariable Integer id){
+    public @ResponseBody String updateProductType(@RequestBody ProductType productType, @PathVariable Long id){
         return productTypeService.updateProductType(productType, id);
     }
 }

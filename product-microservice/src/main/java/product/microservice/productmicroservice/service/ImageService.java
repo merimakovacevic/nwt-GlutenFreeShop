@@ -29,7 +29,7 @@ public class ImageService {
         return imageRepository.findAll();
     }
 
-    public Image getImageById(Integer id){
+    public Image getImageById(Long id){
         Optional<Image> image = imageRepository.findById(id);
         if (image.isEmpty()) {
             throw new RestResponseException(HttpStatus.NOT_FOUND, EntityType.IMAGE);
@@ -45,7 +45,7 @@ public class ImageService {
         return image.get();
     }
 
-    public List<Image> getImageByProductId(Integer productId) {
+    public List<Image> getImageByProductId(Long productId) {
         List<Image> images = imageRepository.findAllByProductId(productId);
         return images;
     }

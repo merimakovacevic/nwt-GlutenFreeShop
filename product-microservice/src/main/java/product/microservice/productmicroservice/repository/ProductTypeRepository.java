@@ -6,6 +6,6 @@ import product.microservice.productmicroservice.model.ProductType;
 
 import java.util.Optional;
 
-public interface ProductTypeRepository extends JpaRepository<ProductType, Integer> {
+public interface ProductTypeRepository extends JpaRepository<ProductType, Long> {
     Optional<ProductType> findProductTypeByName(String name);
 }

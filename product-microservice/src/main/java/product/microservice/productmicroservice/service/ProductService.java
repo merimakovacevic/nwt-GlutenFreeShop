@@ -59,7 +59,7 @@ public class ProductService {
         return Mapper.toProductDto(product);
     }
 
-    public ProductDto getProductById(Integer id) {
+    public ProductDto getProductById(Long id) {
         Optional<Product> product = productRepository.findById(id);
         if (product.isEmpty()) {
             throw new RestResponseException(HttpStatus.NOT_FOUND, EntityType.PRODUCT);
@@ -67,7 +67,7 @@ public class ProductService {
         return Mapper.toProductDto(product.get());
     }
 
-    public void deleteProductById(Integer id) {
+    public void deleteProductById(Long id) {
         Optional<Product> product = productRepository.findById(id);
         if (product.isEmpty()) {
             throw new RestResponseException(HttpStatus.NOT_FOUND, EntityType.PRODUCT);
