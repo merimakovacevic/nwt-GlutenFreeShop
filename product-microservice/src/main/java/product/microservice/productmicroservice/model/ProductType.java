@@ -17,7 +17,7 @@ import java.util.UUID;
 public class ProductType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @NotNull(message="Name should not be null")
     @UniqueElements

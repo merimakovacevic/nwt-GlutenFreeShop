@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import lombok.*;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
@@ -14,8 +15,8 @@ import java.util.List;
 @Builder
 @ApiModel
 @AllArgsConstructor
-public class ProductDto {
-    private Integer id;
+public class ProductDto implements Serializable {
+    private Long id;
 
     private String name;
 

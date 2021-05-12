@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 public class Review {
     @javax.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @NotNull(message="Comment should not be null")
     private String comment;

@@ -28,7 +28,7 @@ public class CustomerController {
     }
 
     @GetMapping(path="/{id}")
-    public Customer getCustomerById(@PathVariable Integer id){
+    public Customer getCustomerById(@PathVariable Long id){
         Optional<Customer> customer = customerRepository.findById(id);
         if (customer.isEmpty()) throw new ApiRequestException("Customer with id " + id + " does not exist");
         return customer.get();

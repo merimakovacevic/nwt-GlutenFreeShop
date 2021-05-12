@@ -24,7 +24,7 @@ public class ReviewService {
         return reviewRepository.findAll();
     }
 
-    public Review getById(Integer id){
+    public Review getById(Long id){
         Optional<Review> review = reviewRepository.findById(id);
         if(review.isEmpty()) throw new ApiRequestException("Review with id " + id + " does not exist!");
         return review.get();
@@ -32,7 +32,7 @@ public class ReviewService {
 
     public String addNew(Review review){
         if (review.getProduct() == null) throw new ApiRequestException("Product is not assigned");
-        Integer productId = review.getProduct().getId();
+        Long productId = review.getProduct().getId();
         if (productId == null) throw new ApiRequestException("Product is not assigned");
         Optional<Product> product = productRepository.findById(productId);
         if(product.isEmpty()) throw new ApiRequestException("Product with id " + productId + " does not exist!");
@@ -42,7 +42,7 @@ public class ReviewService {
         return "Saved";
     }
 
-    public String deleteReviewById(Integer id){
+    public String deleteReviewById(Long id){
         Optional<Review> review = reviewRepository.findById(id);
         if(review.isEmpty()) throw new ApiRequestException("Review with id " + id + " does not exist!");
         reviewRepository.deleteById(id);

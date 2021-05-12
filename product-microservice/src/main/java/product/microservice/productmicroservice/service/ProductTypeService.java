@@ -22,7 +22,7 @@ public class ProductTypeService {
         return productTypeRepository.findAll();
     }
 
-    public ProductType getById(Integer id){
+    public ProductType getById(Long id){
         Optional<ProductType> productType = productTypeRepository.findById(id);
         if(productType.isEmpty()) throw new ApiRequestException("Product type with id "+ id + " does not exist");
         return productType.get();
@@ -34,15 +34,15 @@ public class ProductTypeService {
         return "Saved";
     }
 
-    public String deleteProductTypeById(Integer id){
+    public String deleteProductTypeById(Long id){
         Optional<ProductType> productType = productTypeRepository.findById(id);
         if (productType.isEmpty()) throw new ApiRequestException("Product type with id " + id + " does not exist!");
         productTypeRepository.deleteById(id);
         return "Deleted";
     }
 
-    public String updateProductType(ProductType newProductType, Integer id){
-        Integer productTypeId = newProductType.getId();
+    public String updateProductType(ProductType newProductType, Long id){
+        Long productTypeId = newProductType.getId();
         if (productTypeId == null) throw new ApiRequestException("Id in object is not valid!");
         if (productTypeId != id) throw new ApiRequestException("Id in url is not equal id in object!");
         if (newProductType.getName() == "" || newProductType.getName() == null) throw new ApiRequestException("Name is not valid!");
