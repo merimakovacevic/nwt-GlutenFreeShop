@@ -1,12 +1,17 @@
 spring:
+  application:
+    name: payment-microservice
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost/PaymentDB
+    url: jdbc:mysql://localhost:3307/PaymentDB
     username: root
-    password:
+    password: root
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5Dialect
+
+server:
+  port: 8088
