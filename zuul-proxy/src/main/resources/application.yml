@@ -33,16 +33,22 @@ zuul:
     rating-microservice:
       path: /rating-service/**
       serviceId: rating-microservice
-    third-microservice:
-      path: /third-service/**
-      serviceId: third-microservice
+    user-microservice:
+      path: /user-service/**
+      serviceId: user-microservice
     fourth-microservice:
       path: /fourth-service/**
       serviceId: fourth-microservice
     fifth-microservice:
       path: /fifth-service/**
       serviceId: fifth-microservice
+  sensitiveHeaders: Cookie,Set-Cookie
 
 ribbon:
   eureka:
     enabled: true
+
+
+jwt:
+  security:
+    key: j3H5Ld5nYmGWyULy6xwpOgfSH++NgKXnJMq20vpfd+8=t
