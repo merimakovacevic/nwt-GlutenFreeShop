@@ -1,6 +1,7 @@
-package product.microservice.productmicroservice.controller;
+package product.microservice.productmicroservice.controller.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.*;
 import product.microservice.productmicroservice.exception.ApiRequestException;
 import product.microservice.productmicroservice.model.Image;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(path="/image")
+@RefreshScope
 public class ImageController {
     @Autowired
     private ImageService imageService;
@@ -25,16 +27,6 @@ public class ImageController {
 
     @GetMapping(path="/{id}")
     public Image getImageById(@PathVariable Integer id){
-        return imageService.getById(id);
-    }
-
-    @PostMapping(path="/add")
-    public @ResponseBody String addNewImage(@RequestBody Image image){
-        return imageService.addNew(image);
-    }
-
-    @DeleteMapping(path="/{id}")
-    public @ResponseBody String deleteImage(@PathVariable Integer id){
-        return imageService.deleteImageById(id);
+        return imageService.getImageById(id);
     }
 }

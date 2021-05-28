@@ -1,87 +1,110 @@
 package product.microservice.productmicroservice.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import product.microservice.productmicroservice.dto.mapper.Mapper;
+import product.microservice.productmicroservice.dto.model.ProductDto;
 import product.microservice.productmicroservice.exception.ApiRequestException;
+import product.microservice.productmicroservice.exception.EntityType;
+import product.microservice.productmicroservice.exception.RestResponseException;
+import product.microservice.productmicroservice.model.Image;
 import product.microservice.productmicroservice.model.Product;
 import product.microservice.productmicroservice.model.ProductType;
+import product.microservice.productmicroservice.repository.ImageRepository;
 import product.microservice.productmicroservice.repository.ProductRepository;
 import product.microservice.productmicroservice.repository.ProductTypeRepository;
 
+import java.net.URL;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
+
+    @Autowired
+    private ImageRepository imageRepository;
     @Autowired
     private ProductRepository productRepository;
     @Autowired
     private ProductTypeRepository productTypeRepository;
 
-    public Iterable<Product> getAll () {
-        return productRepository.findAll();
+    public List<ProductDto> getAll() {
+        return productRepository.findAll().stream().map(Mapper::toProductDto).collect(Collectors.toList());
     }
 
-    public String addNew (Product product){
-        if (product.getProductType() == null) throw new ApiRequestException("Product type not assigned");
-        Integer typeId = product.getProductType().getId();
-        if (typeId == null) throw new ApiRequestException("Product type not assigned");
-        Optional<ProductType> productType = productTypeRepository.findById(typeId);
-        if (productType.isEmpty()) throw new ApiRequestException("Product type with id " + typeId + " does not exist!");
-        if (product.getName().equals("") || product.getName() == null) throw new ApiRequestException("Name is not valid");
-        if (product.getDescription().equals("") || product.getDescription() == null) throw new ApiRequestException("Description is not valid");
-        if (product.getTotalRating() < 0 || product.getName() == null) throw new ApiRequestException("Total rating is not valid");
-        if (product.getNumberOfRatings() < 0 || product.getNumberOfRatings() == null) throw new ApiRequestException("Number of ratings is not valid");
-        product.setProductType(productType.get());
-        Product savedProduct = productRepository.save(product);
-        return "Saved";
-    }
+    public ProductDto addNewProduct(ProductDto productDto) {
+        Optional<ProductType> productType = productTypeRepository.findProductTypeByName(productDto.getProductTypeName());
+        if (productType.isEmpty()) {
+            throw new RestResponseException(HttpStatus.BAD_REQUEST, EntityType.PRODUCT_TYPE);
+        }
 
-    public Product getById (Integer id){
-        Optional<Product> product = productRepository.findById(id);
-        if (product.isEmpty()) throw new ApiRequestException("Product with id "+id+" does not exist");
-        return product.get();
-    }
+        Product product = productRepository.save(new Product(productDto.getName(), productDto.getDescription(), productType.get(), Set.of()));
 
-    public String deleteProductById (Integer id){
-        Optional<Product> product = productRepository.findById(id);
-        if (product.isEmpty()) throw new ApiRequestException("Product with id "+id+" does not exist");
-        productRepository.deleteById(id);
-        return "Deleted";
-    }
-
-    public String updateProduct(Product newProduct,Integer id){
-        Integer productId = newProduct.getId();
-        if (productId == null) throw new ApiRequestException("Id in object is not valid!");
-        if (productId != id) throw new ApiRequestException("Id in url is not equal id in object!");
-        if (newProduct.getName() == "" || newProduct.getName() == null) throw new ApiRequestException("Name is not valid!");
-        Product product = productRepository.findById(id).get();
-        product.setName(newProduct.getName());
-        product.setDescription(newProduct.getDescription());
-        product.setNumberOfRatings(newProduct.getNumberOfRatings());
-        product.setTotalRating(newProduct.getTotalRating());
+        List<String> urls = productDto.getUrls();
+        Set<Image> images = urls.stream().map(url -> {
+            Optional<Image> image = imageRepository.findImageByUrl(url);
+            if (image.isPresent()) {
+                throw new RestResponseException(HttpStatus.CONFLICT, EntityType.IMAGE);
+            }
+            else return imageRepository.save(new Image(url, product));
+        }).collect(Collectors.toSet());
+        product.setImages(images);
         productRepository.save(product);
-        return "Updated";
+
+        return Mapper.toProductDto(product);
     }
 
-    public List<Product> findProductsByName(String name){
-        List<Product> products = productRepository.findByName(name);
-        if (products.isEmpty()) throw new ApiRequestException("There are no products with name "+name);
-        return products;
+    public ProductDto getProductById(Integer id) {
+        Optional<Product> product = productRepository.findById(id);
+        if (product.isEmpty()) {
+            throw new RestResponseException(HttpStatus.NOT_FOUND, EntityType.PRODUCT);
+        }
+        return Mapper.toProductDto(product.get());
     }
 
-    public Iterable<Product> findProductsByProductType(Integer id){
-        List<Product> products = productRepository.findByProductTypeId(id);
-        if (products.isEmpty()) throw new ApiRequestException("Product with id "+id+" does not exist");
-        return products;
+    public void deleteProductById(Integer id) {
+        Optional<Product> product = productRepository.findById(id);
+        if (product.isEmpty()) {
+            throw new RestResponseException(HttpStatus.NOT_FOUND, EntityType.PRODUCT);
+        }
+        productRepository.deleteById(id);
     }
 
-    public Iterable<Product> findProductsByProductTypeName(String name){
-        List<Product> types = productRepository.findByProductTypeName(name);
-        if (types.isEmpty()) throw new ApiRequestException("There are no product types with name "+name);
-        return types;
+    public ProductDto updateProduct(ProductDto productDto) {
+        Optional<Product> product = productRepository.findById(productDto.getId());
+        if (product.isEmpty()) {
+            throw new RestResponseException(HttpStatus.NOT_FOUND, EntityType.PRODUCT);
+        }
+        Optional<ProductType> productType = productTypeRepository.findProductTypeByName(productDto.getProductTypeName());
+        if (productType.isEmpty()) {
+            throw new RestResponseException(HttpStatus.BAD_REQUEST, EntityType.PRODUCT_TYPE);
+        }
+
+        imageRepository.deleteAllByProductId(productDto.getId());
+        List<String> urls = productDto.getUrls();
+        Set<Image> images = urls.stream().map(url -> {
+            Optional<Image> image = imageRepository.findImageByUrl(url);
+            if (image.isPresent()) {
+                throw new RestResponseException(HttpStatus.CONFLICT, EntityType.IMAGE);
+            }
+            return imageRepository.save(new Image(url, product.get()));
+        }).collect(Collectors.toSet());
+        
+        productRepository.save(new Product(productDto.getName(), productDto.getDescription(), productType.get(), images));
+        return productDto;
+    }
+
+    public List<ProductDto> findProductsByProductTypeName(String name) {
+        Optional<ProductType> productType = productTypeRepository.findProductTypeByName(name);
+        if (productType.isEmpty()) {
+            throw new RestResponseException(HttpStatus.BAD_REQUEST, EntityType.PRODUCT_TYPE);
+        }
+        List<Product> products = productRepository.findAllByProductTypeName(name);
+        return products.stream().map(Mapper::toProductDto).collect(Collectors.toList());
     }
 }

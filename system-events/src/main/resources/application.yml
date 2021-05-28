@@ -1,10 +1,14 @@
 spring:
+<<<<<<< HEAD:system-events/src/main/resources/application.yml
   application:
     name: system-events-microservice
+=======
+>>>>>>> 42ca3a8574644294a282a7fe29b45d90db41f5af:rating-microservice/target/classes/application.yml
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3307/SystemEventsDB
     username: root
+<<<<<<< HEAD:system-events/src/main/resources/application.yml
     password: root
   jpa:
     hibernate:
@@ -39,3 +43,6 @@ server:
 grpc:
   server:
     port=9090:
+=======
+    password:
+>>>>>>> 42ca3a8574644294a282a7fe29b45d90db41f5af:rating-microservice/target/classes/application.yml
