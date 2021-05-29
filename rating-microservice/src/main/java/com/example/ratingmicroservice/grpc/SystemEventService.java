@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Service
-public class GrpcClientService {
+public class SystemEventService {
     public String sendSystemEvent(SystemEventRequest.LogType logType, String serviceName, Long userId, String action, String reqBody) {
 
         /*

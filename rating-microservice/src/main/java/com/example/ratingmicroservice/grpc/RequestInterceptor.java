@@ -13,10 +13,10 @@ import java.util.stream.Collectors;
 public class RequestInterceptor implements HandlerInterceptor {
     private static Logger log = LoggerFactory.getLogger(RequestInterceptor.class);
 
-    private final GrpcClientService grpcClientService;
+    private final SystemEventService systemEventService;
 
     public RequestInterceptor() {
-        grpcClientService = new GrpcClientService();
+        systemEventService = new SystemEventService();
     }
 
     @Override
@@ -32,7 +32,7 @@ public class RequestInterceptor implements HandlerInterceptor {
                 : getParameters(request);
         SystemEventRequest.LogType logType = response.getStatus() == 200 ? SystemEventRequest.LogType.INFO : SystemEventRequest.LogType.ERROR;
 
-        grpcClientService.sendSystemEvent(logType, request.getRequestURI(),
+        systemEventService.sendSystemEvent(logType, request.getRequestURI(),
                 0L, request.getMethod(), reqBody);
     }
 
