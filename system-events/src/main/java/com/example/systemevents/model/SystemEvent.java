@@ -27,7 +27,7 @@ public class SystemEvent {
     private Integer userId;
 
     @NotNull
-    private Enum.Action action;
+    private String action;
 
     @NotNull
     private String requestBody;

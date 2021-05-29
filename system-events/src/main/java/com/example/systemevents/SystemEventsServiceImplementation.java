@@ -21,7 +21,7 @@ public class SystemEventsServiceImplementation extends SystemEventServiceGrpc.Sy
         systemEvent.setLogType(Enum.LogType.valueOf(request.getLogType().name()));
         systemEvent.setServiceName(request.getServiceName());
         systemEvent.setUserId(request.getUserId());
-        systemEvent.setAction(Enum.Action.valueOf(request.getAction().name()));
+        systemEvent.setAction(request.getAction());
         systemEvent.setRequestBody(request.getRequestBody());
         systemEvent.setTime(request.getTime());
 

@@ -10,13 +10,7 @@ message SystemEventRequest {
     LogType logType = 1;
     string serviceName = 2;
     int32 userId = 3;
-    enum Action {
-        GET = 0;
-        POST = 1;
-        PUT = 2;
-        DELETE = 3;
-    }
-    Action action = 4;
+    string action = 4;
     string requestBody = 5;
     string time = 6;
 }

@@ -6,13 +6,11 @@ import com.example.ratingmicroservice.dto.model.ProductDto;
 import com.example.ratingmicroservice.dto.model.ReviewDto;
 import com.example.ratingmicroservice.exception.EntityType;
 import com.example.ratingmicroservice.exception.RestResponseException;
-import com.example.ratingmicroservice.grpc.GrpcClientService;
 import com.example.ratingmicroservice.model.Product;
 import com.example.ratingmicroservice.model.Review;
 import com.example.ratingmicroservice.model.User;
 import com.example.ratingmicroservice.repository.ReviewRepository;
 import com.example.ratingmicroservice.repository.UserRepository;
-import com.example.systemevents.SystemEventRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,9 +36,6 @@ public class ReviewService {
     @Autowired
     ProductClient productClient;
 
-    @Autowired
-    GrpcClientService grpcClientService;
-
     public List<ReviewDto> findAllByProductId(Long productId) throws JsonProcessingException {
         if (!containsProduct(productClient.getAllProducts(), productId)) {
             throw new RestResponseException(HttpStatus.NOT_FOUND, EntityType.PRODUCT);
@@ -49,18 +44,11 @@ public class ReviewService {
             throw new RestResponseException(HttpStatus.NOT_FOUND, EntityType.REVIEW);
         }
 
-        //TODO: STAVITI PRAVI USER ID UMJESTO NULE
-        grpcClientService.sendSystemEvent(SystemEventRequest.LogType.INFO, "RatingMicroservice | Service: ReviewService | Method: findAllByProductId",
-                0L, SystemEventRequest.Action.GET, "productId=" + productId);
-
         return reviewRepository.findAllByProductId(productId).stream().map(Mapper::toReviewDto).collect(Collectors.toList());
     }
 
     public ReviewDto addReview(ReviewDto reviewRequest) throws JsonProcessingException {
         validateProductAndUser(reviewRequest.getProductId(), reviewRequest.getUserId());
-
-        grpcClientService.sendSystemEvent(SystemEventRequest.LogType.INFO, "RatingMicroservice | Service: ReviewService | Method: addReview",
-                reviewRequest.getUserId(), SystemEventRequest.Action.POST, "");
 
         Review review = reviewRepository.save(new Review(new Product(reviewRequest.getProductId()), new User(reviewRequest.getUserId()),
                 reviewRequest.getComment(), new Date()));
@@ -69,11 +57,6 @@ public class ReviewService {
 
     public void deleteReview(Long reviewId) {
         if (!reviewRepository.existsById(reviewId)) {
-
-            //TODO: STAVITI PRAVI USER ID UMJESTO NULE
-            grpcClientService.sendSystemEvent(SystemEventRequest.LogType.INFO, "RatingMicroservice | Service: ReviewService | Method: addReview",
-                    0L, SystemEventRequest.Action.DELETE, "reviewId=" + reviewId);
-
             throw new RestResponseException(HttpStatus.NOT_FOUND, EntityType.REVIEW);
         }
         reviewRepository.deleteById(reviewId);

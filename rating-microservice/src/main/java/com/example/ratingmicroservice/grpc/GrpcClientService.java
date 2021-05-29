@@ -5,7 +5,6 @@ import com.example.systemevents.SystemEventResponse;
 import com.example.systemevents.SystemEventServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -13,10 +12,15 @@ import java.util.Date;
 
 @Service
 public class GrpcClientService {
-    @Value("${spring.application.name}")
-    private String serviceName;
+    public String sendSystemEvent(SystemEventRequest.LogType logType, String serviceName, Long userId, String action, String reqBody) {
 
-    public String sendSystemEvent(SystemEventRequest.LogType logType, String serviceName, Long userId, SystemEventRequest.Action action, String reqBody) {
+        /*
+        Ovaj dio koda je potrebno zakomentarisati, a zatim odraditi mvn clean install u terminalu
+        kako bi se generisale Java klase koje smo definisali u proto fajlu.
+        Staviti na kraju return ""; jer ova metoda vraca string
+        Kad se odradi mvn clean install odkomentarisati i trebalo bi da radi
+        */
+
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090)
                 .usePlaintext()
                 .build();
