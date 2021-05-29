@@ -6,11 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-import product.microservice.productmicroservice.controller.dto.ProductInfoSyncDTO;
-import product.microservice.productmicroservice.exception.ApiException;
+import product.microservice.productmicroservice.dto.model.ProductInfoSyncDTO;
 import product.microservice.productmicroservice.exception.ApiRequestException;
-
-import java.time.ZonedDateTime;
 
 @Component
 public class RatingClient {

@@ -1,14 +1,9 @@
-package product.microservice.productmicroservice.controller;
+package product.microservice.productmicroservice.controller.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import product.microservice.productmicroservice.exception.ApiRequestException;
-import product.microservice.productmicroservice.model.Product;
 import product.microservice.productmicroservice.model.ProductType;
-import product.microservice.productmicroservice.repository.ProductTypeRepository;
 import product.microservice.productmicroservice.service.ProductTypeService;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping(path="/producttype")

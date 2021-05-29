@@ -6,12 +6,14 @@ import com.example.ratingmicroservice.dto.model.ProductDto;
 import com.example.ratingmicroservice.dto.model.RatingDto;
 import com.example.ratingmicroservice.exception.RestResponseException;
 import com.example.ratingmicroservice.controller.client.ProductClient;
+import com.example.ratingmicroservice.grpc.GrpcClientService;
 import com.example.ratingmicroservice.model.Product;
 import com.example.ratingmicroservice.model.Rating;
 import com.example.ratingmicroservice.model.User;
 import com.example.ratingmicroservice.repository.ProductRepository;
 import com.example.ratingmicroservice.repository.RatingRepository;
 import com.example.ratingmicroservice.repository.UserRepository;
+import com.example.systemevents.SystemEventRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.example.ratingmicroservice.exception.EntityType.*;
+
+//TODO: PREPRAVITI DA SE U METODE NE SALJE EKSPLICITNO KORISNIK NEGO DA SE KORISTI AUTH TOKEN !!!!!!!!
 
 @Service
 public class RatingService {
@@ -37,6 +41,9 @@ public class RatingService {
     @Autowired
     ProductClient productClient;
 
+    @Autowired
+    private GrpcClientService grpcClientService;
+
     private Double getAverageRatingOfProduct(Long productId) throws JsonProcessingException {
         if (containsProduct(productClient.getAllProducts(), productId)) {
             List<Rating> ratings = ratingRepository.findAllByProductId(productId);
@@ -46,34 +53,30 @@ public class RatingService {
                 ratingsSum += r.getRate();
             }
 
+            //TODO: TREBA DODATI ISPRAVNOG KORISNIKA U LOGOVE
+            grpcClientService.sendSystemEvent(SystemEventRequest.LogType.INFO, "RatingMicroservice | Service: RatingService | Method: getAverageRatingOfProduct",
+                    1L, SystemEventRequest.Action.GET, "productId=" + productId);
+
             return ratingsSum / ratings.size();
         }
         throw new RestResponseException(HttpStatus.NOT_FOUND, PRODUCT);
     }
 
     public Optional<AverageRatingDto> getRatingOfProduct(Long productId, Long userId) throws RestResponseException, JsonProcessingException {
-        if (!containsProduct(productClient.getAllProducts(), productId)) {
-            throw new RestResponseException(HttpStatus.NOT_FOUND, PRODUCT);
-        }
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isEmpty()) {
-            throw new RestResponseException(HttpStatus.NOT_FOUND, USER);
-        }
+        validateProductAndUser(productId, userId);
         Optional<Rating> rating = ratingRepository.findRatingByProductIdAndUserId(productId, userId);
         if (rating.isEmpty()) {
             throw new RestResponseException(HttpStatus.NOT_FOUND, RATING);
         }
+
+        grpcClientService.sendSystemEvent(SystemEventRequest.LogType.INFO, "RatingMicroservice | Service: RatingService | Method: getRatingOfProduct",
+                userId, SystemEventRequest.Action.GET, "productId=" + productId + "&userId=" + userId);
+
         return Optional.of(new AverageRatingDto(rating.get().getRate(), getAverageRatingOfProduct(productId)));
     }
 
     public RatingDto addRating(RatingDto ratingDto) throws RestResponseException, JsonProcessingException {
-        if (!containsProduct(productClient.getAllProducts(), ratingDto.getProductId())) {
-            throw new RestResponseException(HttpStatus.NOT_FOUND, PRODUCT);
-        }
-        Optional<User> user = userRepository.findById(ratingDto.getUserId());
-        if (user.isEmpty()) {
-            throw new RestResponseException(HttpStatus.NOT_FOUND, USER);
-        }
+        validateProductAndUser(ratingDto.getProductId(), ratingDto.getUserId());
         Optional<Rating> rating = ratingRepository.findRatingByProductIdAndUserId(ratingDto.getProductId(), ratingDto.getUserId());
         if (rating.isPresent()) {
             throw new RestResponseException(HttpStatus.CONFLICT, RATING);
@@ -83,46 +86,62 @@ public class RatingService {
                 .setProduct(productRepository.save(new Product(ratingDto.getProductId())))
                 .setUser(userRepository.save(new User(ratingDto.getUserId())));
         ratingRepository.save(ratingModel);
+
+        grpcClientService.sendSystemEvent(SystemEventRequest.LogType.INFO, "RatingMicroservice | Service: RatingService | Method: addRating",
+                ratingDto.getUserId(), SystemEventRequest.Action.POST, ratingDto.toString());
+
         return ratingDto;
     }
 
     public RatingDto updateRating(RatingDto ratingDto) throws RestResponseException, JsonProcessingException {
-        Optional<User> user = userRepository.findById(ratingDto.getUserId());
-        if (user.isEmpty()) {
-            throw new RestResponseException(HttpStatus.CONFLICT, USER);
-        }
-        if (!containsProduct(productClient.getAllProducts(), ratingDto.getProductId())) {
-            throw new RestResponseException(HttpStatus.NOT_FOUND, PRODUCT);
-        }
+        validateProductAndUser(ratingDto.getProductId(), ratingDto.getUserId());
         Optional<Rating> rating = ratingRepository.findRatingByProductIdAndUserId(ratingDto.getProductId(), ratingDto.getUserId());
         if (rating.isEmpty()) {
             throw new RestResponseException(HttpStatus.NOT_FOUND, RATING);
         }
+
+        grpcClientService.sendSystemEvent(SystemEventRequest.LogType.INFO, "RatingMicroservice | Service: RatingService | Method: updateRating",
+                ratingDto.getUserId(), SystemEventRequest.Action.PUT, ratingDto.toString());
+
         return Mapper.toRatingDto(ratingRepository.save(rating.get().setRate(ratingDto.getRate())));
     }
 
     public Optional<RatingDto> deleteRating(Long productId, Long userId) throws RestResponseException, JsonProcessingException {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isPresent()) {
-            throw new RestResponseException(HttpStatus.NOT_FOUND, USER);
-        }
-        if (!containsProduct(productClient.getAllProducts(), productId)) {
-            throw new RestResponseException(HttpStatus.NOT_FOUND, PRODUCT);
-        }
+        validateProductAndUser(productId, userId);
         Optional<Rating> rating = ratingRepository.findRatingByProductIdAndUserId(productId, userId);
-        if (rating.isPresent()) {
+        if (rating.isEmpty()) {
             throw new RestResponseException(HttpStatus.NOT_FOUND, RATING);
         }
         Rating r = rating.get();
         ratingRepository.deleteById(rating.get().getId());
+
+        grpcClientService.sendSystemEvent(SystemEventRequest.LogType.INFO, "RatingMicroservice | Service: RatingService | Method: deleteRating",
+                userId, SystemEventRequest.Action.DELETE, "productId=" + productId + "&userId=" + userId);
+
         return Optional.of(Mapper.toRatingDto(r));
     }
 
     public List<Rating> findAll() {
-        return ratingRepository.findAll();
+        List<Rating> ratings = ratingRepository.findAll();
+
+        //TODO: STAVITI PRAVI USER ID UMJESTO NULE
+        grpcClientService.sendSystemEvent(SystemEventRequest.LogType.INFO, "RatingMicroservice | Service: RatingService | Method: findAll",
+                0L, SystemEventRequest.Action.GET, "");
+
+        return ratings;
     }
 
     private boolean containsProduct(final List<ProductDto> list, final Long id){
         return list.stream().filter(o -> o.getId().equals(id)).findFirst().isPresent();
+    }
+
+    private void validateProductAndUser(Long productId, Long userId) throws RestResponseException {
+        if (!containsProduct(productClient.getAllProducts(), productId)) {
+            throw new RestResponseException(HttpStatus.NOT_FOUND, PRODUCT);
+        }
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            throw new RestResponseException(HttpStatus.NOT_FOUND, USER);
+        }
     }
 }

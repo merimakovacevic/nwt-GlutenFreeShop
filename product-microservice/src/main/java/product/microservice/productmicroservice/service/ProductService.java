@@ -1,156 +1,110 @@
 package product.microservice.productmicroservice.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import product.microservice.productmicroservice.amqp.event.OrderCreatedEvent;
-import product.microservice.productmicroservice.amqp.event.OrderItemInfo;
-import product.microservice.productmicroservice.controller.dto.CalculatePriceDTO;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import product.microservice.productmicroservice.dto.mapper.Mapper;
+import product.microservice.productmicroservice.dto.model.ProductDto;
 import product.microservice.productmicroservice.exception.ApiRequestException;
-import product.microservice.productmicroservice.grpc.GRPCClientService;
+import product.microservice.productmicroservice.exception.EntityType;
+import product.microservice.productmicroservice.exception.RestResponseException;
+import product.microservice.productmicroservice.model.Image;
 import product.microservice.productmicroservice.model.Product;
 import product.microservice.productmicroservice.model.ProductType;
+import product.microservice.productmicroservice.repository.ImageRepository;
 import product.microservice.productmicroservice.repository.ProductRepository;
 import product.microservice.productmicroservice.repository.ProductTypeRepository;
 
-import javax.transaction.Transactional;
-import java.util.LinkedHashSet;
+import java.net.URL;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
+
+    @Autowired
+    private ImageRepository imageRepository;
     @Autowired
     private ProductRepository productRepository;
     @Autowired
     private ProductTypeRepository productTypeRepository;
 
-    @Autowired
-    private GRPCClientService grpcClientService;
-
-    public Iterable<Product> getAll() {
-        Iterable<Product> products = productRepository.findAll();
-        grpcClientService.sendSystemEvent("PRODUCT_GET_ALL", "GET");
-        return products;
+    public List<ProductDto> getAll() {
+        return productRepository.findAll().stream().map(Mapper::toProductDto).collect(Collectors.toList());
     }
 
-    public String addNew(Product product) {
-        if (product.getProductType() == null) throw new ApiRequestException("Product type not assigned");
-        Long typeId = product.getProductType().getId();
-        if (typeId == null) throw new ApiRequestException("Product type not assigned");
-        Optional<ProductType> productType = productTypeRepository.findById(typeId);
-        if (productType.isEmpty()) throw new ApiRequestException("Product type with id " + typeId + " does not exist!");
-        if (product.getName().equals("") || product.getName() == null)
-            throw new ApiRequestException("Name is not valid");
-        if (product.getDescription().equals("") || product.getDescription() == null)
-            throw new ApiRequestException("Description is not valid");
-        product.setProductType(productType.get());
-        Product savedProduct = productRepository.save(product);
-        grpcClientService.sendSystemEvent("PRODUCT_CREATE", "POST");
-        return "Saved";
-    }
+    public ProductDto addNewProduct(ProductDto productDto) {
+        Optional<ProductType> productType = productTypeRepository.findProductTypeByName(productDto.getProductTypeName());
+        if (productType.isEmpty()) {
+            throw new RestResponseException(HttpStatus.BAD_REQUEST, EntityType.PRODUCT_TYPE);
+        }
 
-    public Product getById(Long id) {
-        Optional<Product> product = productRepository.findById(id);
-        if (product.isEmpty()) throw new ApiRequestException("Product with id " + id + " does not exist");
-        grpcClientService.sendSystemEvent("PRODUCT_GET_BY_ID", "GET");
-        return product.get();
-    }
+        Product product = productRepository.save(new Product(productDto.getName(), productDto.getDescription(), productType.get(), Set.of()));
 
-    public String deleteProductById(Long id) {
-        Optional<Product> product = productRepository.findById(id);
-        if (product.isEmpty()) throw new ApiRequestException("Product with id " + id + " does not exist");
-        productRepository.deleteById(id);
-        grpcClientService.sendSystemEvent("PRODUCT_DELETE_BY_ID", "DELETE");
-        return "Deleted";
-    }
-
-    public String updateProduct(Product newProduct, Long id) {
-        Long productId = newProduct.getId();
-        if (productId == null) throw new ApiRequestException("Id in object is not valid!");
-        if (productId != id) throw new ApiRequestException("Id in url is not equal id in object!");
-        if (newProduct.getName() == "" || newProduct.getName() == null)
-            throw new ApiRequestException("Name is not valid!");
-        Product product = productRepository.findById(id).get();
-        product.setName(newProduct.getName());
-        product.setDescription(newProduct.getDescription());
+        List<String> urls = productDto.getUrls();
+        Set<Image> images = urls.stream().map(url -> {
+            Optional<Image> image = imageRepository.findImageByUrl(url);
+            if (image.isPresent()) {
+                throw new RestResponseException(HttpStatus.CONFLICT, EntityType.IMAGE);
+            }
+            else return imageRepository.save(new Image(url, product));
+        }).collect(Collectors.toSet());
+        product.setImages(images);
         productRepository.save(product);
-        grpcClientService.sendSystemEvent("PRODUCT_UPDATE_BY_ID", "UPDATE");
-        return "Updated";
+
+        return Mapper.toProductDto(product);
     }
 
-    public List<Product> findProductsByName(String name) {
-        List<Product> products = productRepository.findByName(name);
-        if (products.isEmpty()) throw new ApiRequestException("There are no products with name " + name);
-        grpcClientService.sendSystemEvent("PRODUCT_FIND_BY_NAME", "GET");
-        return products;
+    public ProductDto getProductById(Long id) {
+        Optional<Product> product = productRepository.findById(id);
+        if (product.isEmpty()) {
+            throw new RestResponseException(HttpStatus.NOT_FOUND, EntityType.PRODUCT);
+        }
+        return Mapper.toProductDto(product.get());
     }
 
-    public Iterable<Product> findProductsByProductType(Long id) {
-        List<Product> products = productRepository.findByProductTypeId(id);
-        if (products.isEmpty()) throw new ApiRequestException("Product with id " + id + " does not exist");
-        grpcClientService.sendSystemEvent("PRODUCT_FIND_BY_TYPE", "GET");
-        return products;
+    public void deleteProductById(Long id) {
+        Optional<Product> product = productRepository.findById(id);
+        if (product.isEmpty()) {
+            throw new RestResponseException(HttpStatus.NOT_FOUND, EntityType.PRODUCT);
+        }
+        productRepository.deleteById(id);
     }
 
-    public Iterable<Product> findProductsByProductTypeName(String name) {
-        List<Product> types = productRepository.findByProductTypeName(name);
-        if (types.isEmpty()) throw new ApiRequestException("There are no product types with name " + name);
-        grpcClientService.sendSystemEvent("PRODUCT_FIND_BY_TYPE_NAME", "GET");
-        return types;
-    }
-
-    public Set<Long> updateStockForItemList(List<OrderItemInfo> itemInfoList) {
-        Set<Long> outOfStockProductIds = new LinkedHashSet<>();
-
-        for (OrderItemInfo orderItemInfo : itemInfoList) {
-            Optional<Product> optProduct = productRepository.findById(orderItemInfo.getProductId());
-
-            if (optProduct.isEmpty() || optProduct.get().getStock() < orderItemInfo.getQuantity()) {
-                outOfStockProductIds.add(orderItemInfo.getProductId());
-            }
+    public ProductDto updateProduct(ProductDto productDto) {
+        Optional<Product> product = productRepository.findById(productDto.getId());
+        if (product.isEmpty()) {
+            throw new RestResponseException(HttpStatus.NOT_FOUND, EntityType.PRODUCT);
+        }
+        Optional<ProductType> productType = productTypeRepository.findProductTypeByName(productDto.getProductTypeName());
+        if (productType.isEmpty()) {
+            throw new RestResponseException(HttpStatus.BAD_REQUEST, EntityType.PRODUCT_TYPE);
         }
 
-        if (outOfStockProductIds.isEmpty()) {
-            for (OrderItemInfo orderItemInfo : itemInfoList) {
-                Product product = getById(orderItemInfo.getProductId());
-
-                product.setStock(product.getStock() - orderItemInfo.getQuantity());
-                productRepository.save(product);
+        imageRepository.deleteAllByProductId(productDto.getId());
+        List<String> urls = productDto.getUrls();
+        Set<Image> images = urls.stream().map(url -> {
+            Optional<Image> image = imageRepository.findImageByUrl(url);
+            if (image.isPresent()) {
+                throw new RestResponseException(HttpStatus.CONFLICT, EntityType.IMAGE);
             }
+            return imageRepository.save(new Image(url, product.get()));
+        }).collect(Collectors.toSet());
 
-            return outOfStockProductIds;
-        }
-
-        return outOfStockProductIds;
+        productRepository.save(new Product(productDto.getName(), productDto.getDescription(), productType.get(), images));
+        return productDto;
     }
 
-    public Double calculatePrice(List<OrderItemInfo> itemInfoList) {
-        double amount = 0.0;
-
-        for (OrderItemInfo orderItemInfo : itemInfoList) {
-            Optional<Product> optionalProduct = productRepository.findById(orderItemInfo.getProductId());
-
-            if (optionalProduct.isEmpty()) {
-                return 0.0;
-            }
-
-            amount += optionalProduct.get().getPrice() * orderItemInfo.getQuantity();
+    public List<ProductDto> findProductsByProductTypeName(String name) {
+        Optional<ProductType> productType = productTypeRepository.findProductTypeByName(name);
+        if (productType.isEmpty()) {
+            throw new RestResponseException(HttpStatus.BAD_REQUEST, EntityType.PRODUCT_TYPE);
         }
-
-        return amount;
-    }
-
-    public void returnStock(List<OrderItemInfo> itemInfoList) {
-        for (OrderItemInfo orderItemInfo : itemInfoList) {
-            Optional<Product> optionalProduct = productRepository.findById(orderItemInfo.getProductId());
-
-            if (optionalProduct.isPresent()) {
-                Product product = optionalProduct.get();
-                product.setStock(product.getStock() + orderItemInfo.getQuantity());
-                productRepository.save(product);
-            }
-        }
-
+        List<Product> products = productRepository.findAllByProductTypeName(name);
+        return products.stream().map(Mapper::toProductDto).collect(Collectors.toList());
     }
 }

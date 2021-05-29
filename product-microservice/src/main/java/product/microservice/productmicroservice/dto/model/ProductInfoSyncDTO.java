@@ -1,4 +1,4 @@
-package product.microservice.productmicroservice.controller.dto;
+package product.microservice.productmicroservice.dto.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,19 +1,23 @@
 package product.microservice.productmicroservice.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import javax.validation.constraints.*;
+import lombok.experimental.Accessors;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 @Entity
-@Getter @Setter @NoArgsConstructor
+@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@Accessors(chain = true)
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,23 +29,18 @@ public class Product {
     @NotNull(message="Description should not be null")
     private String description;
 
-    @Min(value = 0, message = "Product stock cannot be lower then 0")
-    @NotNull(message="Product stock should not be null")
-    private Integer stock;
-
-    @Min(value = 0, message = "Product price cannot be lower then 0")
-    @NotNull(message="Product price should not be null")
-    private Double price;
-
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "producttype_id")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private ProductType productType;
 
-    public Product(String Name, String Description, ProductType ProductType){
-        name=Name;
-        description=Description;
-        productType=ProductType;
-    }
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private Set<Image> images = new HashSet<>();
 
+    public Product(String name, String description, ProductType productType, Set<Image> images){
+        this.name = name;
+        this.description = description;
+        this.productType = productType;
+        this.images = images;
+    }
 }

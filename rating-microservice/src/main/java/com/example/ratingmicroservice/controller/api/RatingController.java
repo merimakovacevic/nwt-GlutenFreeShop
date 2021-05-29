@@ -22,12 +22,13 @@ import java.util.Optional;
 @RestController
 @Validated
 @RefreshScope
+@RequestMapping("/rating")
 public class RatingController {
 
     @Autowired
     private RatingService ratingService;
 
-    @GetMapping(value = "/rating/get", produces = "application/json")
+    @GetMapping
     @ResponseBody
     public ResponseEntity<?> getRating(
             @RequestParam @NotNull(message = "Param productId cannot be empty.") Long productId,
@@ -40,7 +41,7 @@ public class RatingController {
                 .entity();
     }
 
-    @PostMapping(value = "/rating/add", produces = "application/json")
+    @PostMapping(value = "/add", produces = "application/json")
     @ResponseBody
     public ResponseEntity<?> addRating(@Valid @RequestBody RatingDto ratingDto) throws JsonProcessingException {
 
@@ -51,7 +52,7 @@ public class RatingController {
                 .entity();
     }
 
-    @PutMapping(value = "/rating/update", produces = "application/json")
+    @PutMapping(value = "/update", produces = "application/json")
     @ResponseBody
     public ResponseEntity<?> updateRating(@Valid @RequestBody RatingDto ratingDto) throws JsonProcessingException {
 
@@ -62,7 +63,7 @@ public class RatingController {
                 .entity();
     }
 
-    @DeleteMapping(value = "/rating/delete", produces = "application/json")
+    @DeleteMapping(value = "/delete", produces = "application/json")
     public ResponseEntity<?> deleteRating(
             @RequestParam @NotNull(message = "Param productId cannot be empty.") Long productId,
             @RequestParam @NotNull(message = "Param userId cannot be empty.") Long userId) throws JsonProcessingException {
@@ -74,7 +75,7 @@ public class RatingController {
                 .entity();
     }
 
-    @GetMapping(value = "/rating", produces = "application/json")
+    @GetMapping(value = "/all", produces = "application/json")
     public ResponseEntity<?> getAllRatings() {
         List<Rating> ratings = ratingService.findAll();
         return new ResponseEntity<>(ratings, HttpStatus.CREATED);

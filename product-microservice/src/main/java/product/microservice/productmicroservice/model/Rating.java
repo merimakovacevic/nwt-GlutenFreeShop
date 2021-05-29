@@ -9,24 +9,17 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
-public class Image {
+@Getter @Setter @NoArgsConstructor
+public class Rating {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message="Url should not be null")
-    private String url;
+    @NotNull(message="Rating number should not be null")
+    private Integer ratingNumber;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "product_id")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Product product;
-
-    public Image(String url, Product product) {
-        this.url = url;
-        this.product = product;
-    }
 }

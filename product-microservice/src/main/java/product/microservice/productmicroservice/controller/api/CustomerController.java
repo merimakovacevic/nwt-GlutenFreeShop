@@ -1,16 +1,10 @@
-package product.microservice.productmicroservice.controller;
+package product.microservice.productmicroservice.controller.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import product.microservice.productmicroservice.exception.ApiRequestException;
 import product.microservice.productmicroservice.model.Customer;
-import product.microservice.productmicroservice.model.Image;
-import product.microservice.productmicroservice.model.Product;
 import product.microservice.productmicroservice.repository.CustomerRepository;
-import product.microservice.productmicroservice.repository.ImageRepository;
-import product.microservice.productmicroservice.repository.ProductRepository;
-
-import java.util.Optional;
 
 import java.util.Optional;
 

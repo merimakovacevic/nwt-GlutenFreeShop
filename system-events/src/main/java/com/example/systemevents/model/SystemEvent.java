@@ -13,22 +13,25 @@ import javax.validation.constraints.NotNull;
 @Data
 @Table(name = "system_events")
 public class SystemEvent {
-
     @Id
     @GeneratedValue
     private Long id;
 
     @NotNull
-    private String time;
+    private Enum.LogType logType;
 
     @NotNull
     private String serviceName;
 
-    private String user;
+    @NotNull
+    private Integer userId;
 
     @NotNull
-    private String eventName;
+    private Enum.Action action;
 
     @NotNull
-    private String eventType;
+    private String requestBody;
+
+    @NotNull
+    private String time;
 }
