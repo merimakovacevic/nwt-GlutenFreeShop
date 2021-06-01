@@ -3,9 +3,9 @@ package com.example.ratingmicroservice.controller.api;
 import com.example.ratingmicroservice.controller.response.RestResponse;
 import com.example.ratingmicroservice.dto.model.AverageRatingDto;
 import com.example.ratingmicroservice.dto.model.RatingDto;
-import com.example.ratingmicroservice.grpc.GRPCClientService;
 import com.example.ratingmicroservice.model.Rating;
 import com.example.ratingmicroservice.service.RatingService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -22,69 +22,62 @@ import java.util.Optional;
 @RestController
 @Validated
 @RefreshScope
+@RequestMapping("/rating")
 public class RatingController {
 
     @Autowired
     private RatingService ratingService;
 
-    @Autowired
-    private GRPCClientService grpcClientService;
-
-    @GetMapping(value = "/rating/get", produces = "application/json")
+    @GetMapping
     @ResponseBody
     public ResponseEntity<?> getRating(
             @RequestParam @NotNull(message = "Param productId cannot be empty.") Long productId,
             @RequestParam @NotNull(message = "Param userId cannot be empty.") Long userId) throws Exception {
 
         Optional<AverageRatingDto> rating = ratingService.getRatingOfProduct(productId, userId);
-        grpcClientService.sendSystemEvent("Get rating by userId and productId", "READ", "Test User");
         return RestResponse.builder()
                 .status(HttpStatus.OK)
                 .result(rating.get())
                 .entity();
     }
 
-    @PostMapping(value = "/rating/add", produces = "application/json")
+    @PostMapping(value = "/add", produces = "application/json")
     @ResponseBody
-    public ResponseEntity<?> addRating(@Valid @RequestBody RatingDto ratingDto) {
+    public ResponseEntity<?> addRating(@Valid @RequestBody RatingDto ratingDto) throws JsonProcessingException {
 
         ratingService.addRating(ratingDto);
-        grpcClientService.sendSystemEvent("Create rating", "INSERT", "Test User");
         return RestResponse.builder()
                 .status(HttpStatus.OK)
                 .message("Rating successfully saved.")
                 .entity();
     }
 
-    @PutMapping(value = "/rating/update", produces = "application/json")
+    @PutMapping(value = "/update", produces = "application/json")
     @ResponseBody
-    public ResponseEntity<?> updateRating(@Valid @RequestBody RatingDto ratingDto) {
+    public ResponseEntity<?> updateRating(@Valid @RequestBody RatingDto ratingDto) throws JsonProcessingException {
 
         ratingService.updateRating(ratingDto);
-        grpcClientService.sendSystemEvent("Update rating", "UPDATE", "Test User");
         return RestResponse.builder()
                 .status(HttpStatus.OK)
                 .message("Rating successfully updated.")
                 .entity();
     }
 
-    @DeleteMapping(value = "/rating/delete", produces = "application/json")
+    @DeleteMapping(value = "/delete", produces = "application/json")
     public ResponseEntity<?> deleteRating(
             @RequestParam @NotNull(message = "Param productId cannot be empty.") Long productId,
-            @RequestParam @NotNull(message = "Param userId cannot be empty.") Long userId) {
+            @RequestParam @NotNull(message = "Param userId cannot be empty.") Long userId) throws JsonProcessingException {
 
         ratingService.deleteRating(productId, userId);
-        grpcClientService.sendSystemEvent("Delete rating by productId and userId", "DELETE", "Test User");
         return RestResponse.builder()
                 .status(HttpStatus.OK)
                 .message("Rating successfully deleted.")
                 .entity();
     }
 
-    @GetMapping(value = "/rating", produces = "application/json")
+    @GetMapping(value = "/all", produces = "application/json")
     public ResponseEntity<?> getAllRatings() {
         List<Rating> ratings = ratingService.findAll();
-        grpcClientService.sendSystemEvent("Get all ratings", "READ", "Test User");
         return new ResponseEntity<>(ratings, HttpStatus.CREATED);
     }
 
@@ -96,7 +89,7 @@ public class RatingController {
     @Value("${message}")
     private String message;
 
-    @RequestMapping("/greeting")
+    @GetMapping("/greeting")
     public String hello() {
         return message;
     }

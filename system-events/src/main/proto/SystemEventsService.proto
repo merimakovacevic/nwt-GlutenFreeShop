@@ -3,11 +3,22 @@ option java_multiple_files = true;
 package com.example.systemevents;
 
 message SystemEventRequest {
-    string time = 1;
+    enum LogType {
+        INFO = 0;
+        ERROR = 1;
+    }
+    LogType logType = 1;
     string serviceName = 2;
-    string user = 3;
-    string eventName = 4;
-    string eventType = 5;
+    int32 userId = 3;
+    enum Action {
+        GET = 0;
+        POST = 1;
+        PUT = 2;
+        DELETE = 3;
+    }
+    Action action = 4;
+    string requestBody = 5;
+    string time = 6;
 }
 
 message SystemEventResponse {

@@ -1,23 +1,17 @@
 spring:
-<<<<<<< HEAD:system-events/src/main/resources/application.yml
   application:
     name: system-events-microservice
-=======
->>>>>>> 42ca3a8574644294a282a7fe29b45d90db41f5af:rating-microservice/target/classes/application.yml
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3307/SystemEventsDB
+    url: jdbc:mysql://localhost:3306/SystemEventsDB
     username: root
-<<<<<<< HEAD:system-events/src/main/resources/application.yml
-    password: root
+    password: Infobip2021!
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5Dialect
-  config:
-    import=optional:configserver:http://localhost:8888/:
 
 eureka:
   client:
@@ -42,7 +36,4 @@ server:
 
 grpc:
   server:
-    port=9090:
-=======
-    password:
->>>>>>> 42ca3a8574644294a282a7fe29b45d90db41f5af:rating-microservice/target/classes/application.yml
+    port: 9090

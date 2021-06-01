@@ -17,7 +17,7 @@ import java.util.List;
 public class Order {
 
     public enum OrderStatus {
-        Pending, Created, Processing, Finished, Failed
+        Pending, Processed, Finished, Failed
     }
 
     @Id

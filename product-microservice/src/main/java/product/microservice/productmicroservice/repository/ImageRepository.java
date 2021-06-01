@@ -9,9 +9,9 @@ import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 
-public interface ImageRepository extends JpaRepository<Image, Integer> {
+public interface ImageRepository extends JpaRepository<Image, Long> {
     Optional<Image> findImageByUrl(String url);
-    List<Image> findAllByProductId(Integer productId);
+    List<Image> findAllByProductId(Long productId);
     @Transactional
-    void deleteAllByProductId(Integer productId);
+    void deleteAllByProductId(Long productId);
 }

@@ -46,7 +46,7 @@ public class ProductController {
 
     @GetMapping(path="/{id}")
     @ResponseBody
-    public ResponseEntity<?> getProductById (@NotNull @PathVariable Integer id){
+    public ResponseEntity<?> getProductById (@NotNull @PathVariable Long id){
         ProductDto productDto = productService.getProductById(id);
         return RestResponse.builder()
                 .status(HttpStatus.OK)
@@ -56,7 +56,7 @@ public class ProductController {
 
     @DeleteMapping(path="/delete/{id}")
     @ResponseBody
-    public ResponseEntity<?> deleteProduct (@PathVariable Integer id){
+    public ResponseEntity<?> deleteProduct (@PathVariable Long id){
         productService.deleteProductById(id);
         return RestResponse.builder()
                 .status(HttpStatus.OK)

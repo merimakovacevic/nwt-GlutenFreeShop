@@ -73,7 +73,7 @@ public class OrderControllerTest {
     public void givenExistingOrderId_getReturnObject() throws Exception {
         User user = new User(1L, "Test User");
 
-        Order order = new Order(2L, user, "Test 1 Address", Order.OrderStatus.Created, null);
+        Order order = new Order(2L, user, "Test 1 Address", Order.OrderStatus.Pending, null);
 
         when(orderService.findById(2L)).thenReturn(Optional.of(order));
 
@@ -119,7 +119,7 @@ public class OrderControllerTest {
 
         List<Order> orders = new ArrayList<>();
         orders.add(new Order(1L, user1, "Address One", Order.OrderStatus.Pending, null));
-        orders.add(new Order(2L, user2, "Address Two", Order.OrderStatus.Created, null));
+        orders.add(new Order(2L, user2, "Address Two", Order.OrderStatus.Pending, null));
         orders.add(new Order(3L, user1, "Address Three", Order.OrderStatus.Finished, null));
 
         when(orderService.findAll()).thenReturn(orders);
@@ -138,7 +138,7 @@ public class OrderControllerTest {
 
                 .andExpect(jsonPath("$.[1].id").value(2L))
                 .andExpect(jsonPath("$.[1].deliveryAddress").value("Address Two"))
-                .andExpect(jsonPath("$.[1].orderStatus").value(Order.OrderStatus.Created.name()))
+                .andExpect(jsonPath("$.[1].orderStatus").value(Order.OrderStatus.Pending.name()))
                 .andExpect(jsonPath("$.[1].user.id").value(2L))
                 .andExpect(jsonPath("$.[1].user.name").value("User Two"))
 
@@ -165,7 +165,7 @@ public class OrderControllerTest {
         User user2 = new User(2L, "User Two");
 
         Order order1 = new Order(1L, user1, "Address One", Order.OrderStatus.Pending, null);
-        Order order2 = new Order(2L, user2, "Address Two", Order.OrderStatus.Created, null);
+        Order order2 = new Order(2L, user2, "Address Two", Order.OrderStatus.Pending, null);
         Order order3 = new Order(3L, user1, "Address Three", Order.OrderStatus.Finished, null);
 
         when(orderService.findAllOrdersByUser(user1.getId())).thenReturn(List.of(order1, order3));
@@ -206,7 +206,7 @@ public class OrderControllerTest {
 
                 .andExpect(jsonPath("$.[0].id").value(2L))
                 .andExpect(jsonPath("$.[0].deliveryAddress").value("Address Two"))
-                .andExpect(jsonPath("$.[0].orderStatus").value(Order.OrderStatus.Created.name()))
+                .andExpect(jsonPath("$.[0].orderStatus").value(Order.OrderStatus.Pending.name()))
                 .andExpect(jsonPath("$.[0].user.id").value(2L))
                 .andExpect(jsonPath("$.[0].user.name").value("User Two"));
     }

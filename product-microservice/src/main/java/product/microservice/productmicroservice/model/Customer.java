@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer Id;
+    private Long Id;
 
     @NotNull(message="First name should not be null")
     private String FirstName;

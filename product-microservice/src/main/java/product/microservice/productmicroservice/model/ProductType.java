@@ -7,17 +7,14 @@ import org.hibernate.validator.constraints.UniqueElements;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 @Entity
 @Getter @Setter @NoArgsConstructor
 public class ProductType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @NotNull(message="Name should not be null")
     @UniqueElements
@@ -29,5 +26,4 @@ public class ProductType {
     public ProductType(String Name){
         name=Name;
     }
-
 }

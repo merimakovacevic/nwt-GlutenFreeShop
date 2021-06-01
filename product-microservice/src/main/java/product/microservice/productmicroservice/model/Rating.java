@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 public class Rating {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @NotNull(message="Rating number should not be null")
     private Integer ratingNumber;

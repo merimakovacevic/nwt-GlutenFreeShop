@@ -1,6 +1,7 @@
 package com.example.ratingmicroservice.exception;
 
 import com.example.ratingmicroservice.controller.response.RestResponse;
+import com.example.systemevents.SystemEventRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +43,7 @@ public class RestErrorHandler extends ResponseEntityExceptionHandler {
 
     protected @Override
     ResponseEntity handleMissingPathVariable(MissingPathVariableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+
         return RestResponse.builder()
                 .status(status)
                 .message(ex.getMessage())

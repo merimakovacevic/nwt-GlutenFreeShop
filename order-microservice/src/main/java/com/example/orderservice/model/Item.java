@@ -1,5 +1,6 @@
 package com.example.orderservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,7 @@ public class Item {
 
     private int amount;
 
+    @JsonIgnore
     @ManyToOne
     private Order order;
 

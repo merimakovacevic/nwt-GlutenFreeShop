@@ -3,4 +3,9 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3306/RatingDB
     username: root
-    password:
+    password: Infobip2021!
+management:
+  endpoints:
+    web:
+      exposure:
+        include: hystrix.stream

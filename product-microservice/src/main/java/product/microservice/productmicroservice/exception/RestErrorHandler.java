@@ -51,9 +51,9 @@ public class RestErrorHandler extends ResponseEntityExceptionHandler {
     protected @Override
     ResponseEntity handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         return RestResponse.builder()
-                        .status(status)
-                        .message(ex.getMessage())
-                        .entity();
+                .status(status)
+                .message(ex.getMessage())
+                .entity();
     }
 
     @ExceptionHandler(Exception.class)

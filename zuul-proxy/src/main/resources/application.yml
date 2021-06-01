@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: zuul-proxy
+#  config:
+#    import=optional:configserver:http://localhost:8888/:
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    registerWithEureka: true
+    fetchRegistry: true
+  instance:
+    hostname: localhost
+
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          client:
+            RestTemplate=DEBUG:
+
+
+server:
+  port: 9200
+
+zuul:
+  routes:
+    order-microservice:
+      path: /order-service/**
+      serviceId: order-microservice
+    rating-microservice:
+      path: /rating-service/**
+      serviceId: rating-microservice
+    user-microservice:
+      path: /user-service/**
+      serviceId: user-microservice
+    fourth-microservice:
+      path: /fourth-service/**
+      serviceId: fourth-microservice
+    fifth-microservice:
+      path: /fifth-service/**
+      serviceId: fifth-microservice
+  sensitiveHeaders: Cookie,Set-Cookie
+
+ribbon:
+  eureka:
+    enabled: true
+
+
+jwt:
+  security:
+    key: j3H5Ld5nYmGWyULy6xwpOgfSH++NgKXnJMq20vpfd+8=t

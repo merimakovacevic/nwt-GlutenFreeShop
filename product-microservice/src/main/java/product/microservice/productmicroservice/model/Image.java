@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @NotNull(message="Url should not be null")
     private String url;
