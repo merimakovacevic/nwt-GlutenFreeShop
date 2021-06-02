@@ -92,4 +92,8 @@ public class ReviewService {
             throw new RestResponseException(HttpStatus.NOT_FOUND, USER);
         }
     }
+
+    public List<String> getCommentsForProduct(Product product) {
+        return reviewRepository.getCommentsForProduct(product);
+    }
 }

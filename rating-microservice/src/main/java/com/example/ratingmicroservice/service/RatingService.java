@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.example.ratingmicroservice.exception.EntityType.*;
@@ -143,5 +144,9 @@ public class RatingService {
         if (user.isEmpty()) {
             throw new RestResponseException(HttpStatus.NOT_FOUND, USER);
         }
+    }
+
+    public Map<String, Object> getAverageRatingForProduct(Long productId) {
+        return ratingRepository.getAverageRatingForProduct(productId);
     }
 }

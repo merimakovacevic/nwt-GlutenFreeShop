@@ -1,44 +1,46 @@
 package product.microservice.productmicroservice.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import product.microservice.productmicroservice.dto.mapper.Mapper;
+import product.microservice.productmicroservice.dto.model.ProductTypeDto;
 import product.microservice.productmicroservice.exception.ApiRequestException;
-import product.microservice.productmicroservice.model.Product;
+import product.microservice.productmicroservice.exception.EntityType;
+import product.microservice.productmicroservice.exception.RestResponseException;
 import product.microservice.productmicroservice.model.ProductType;
-import product.microservice.productmicroservice.model.Rating;
 import product.microservice.productmicroservice.repository.ProductTypeRepository;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductTypeService {
     @Autowired
     private ProductTypeRepository productTypeRepository;
 
-    public Iterable<ProductType> getAll() {
-        return productTypeRepository.findAll();
+    public List<ProductTypeDto> getAll() {
+        return productTypeRepository.findAll().stream().map(Mapper::toProductTypeDto).collect(Collectors.toList());
     }
 
-    public ProductType getById(Long id){
+    public ProductTypeDto getProductTypeById(Long id){
         Optional<ProductType> productType = productTypeRepository.findById(id);
-        if(productType.isEmpty()) throw new ApiRequestException("Product type with id "+ id + " does not exist");
-        return productType.get();
+        if(productType.isEmpty()) throw new RestResponseException(HttpStatus.NOT_FOUND, EntityType.PRODUCT_TYPE);
+        return Mapper.toProductTypeDto(productType.get());
     }
 
-    public String addNew(ProductType productType){
-        if (productType.getName().equals("") || productType.getName() == null) throw new ApiRequestException("Name is not valid");
+    public ProductTypeDto addNewProductType(ProductTypeDto productTypeDto){
+        if (productTypeDto.getName().equals("") || productTypeDto.getName() == null) throw new RestResponseException(HttpStatus.BAD_REQUEST, EntityType.PRODUCT_TYPE);
+        ProductType productType = productTypeRepository.save(new ProductType(productTypeDto.getName()));
         productTypeRepository.save(productType);
-        return "Saved";
+        return Mapper.toProductTypeDto(productType);
     }
 
-    public String deleteProductTypeById(Long id){
+    public void deleteProductTypeById(Long id){
         Optional<ProductType> productType = productTypeRepository.findById(id);
-        if (productType.isEmpty()) throw new ApiRequestException("Product type with id " + id + " does not exist!");
+        if (productType.isEmpty()) throw new RestResponseException(HttpStatus.NOT_FOUND, EntityType.PRODUCT_TYPE);
         productTypeRepository.deleteById(id);
-        return "Deleted";
     }
 
     public String updateProductType(ProductType newProductType, Long id){
@@ -50,5 +52,15 @@ public class ProductTypeService {
         productType.setName(newProductType.getName());
         productTypeRepository.save(productType);
         return "Updated";
+    }
+
+    public ProductTypeDto updateProductType(ProductTypeDto productTypeDto) {
+        Optional<ProductType> productType = productTypeRepository.findById(productTypeDto.getId());
+        if (productType.isEmpty()) {
+            throw new RestResponseException(HttpStatus.NOT_FOUND, EntityType.PRODUCT_TYPE);
+        }
+
+        productTypeRepository.save(new ProductType(productTypeDto.getName()));
+        return productTypeDto;
     }
 }
