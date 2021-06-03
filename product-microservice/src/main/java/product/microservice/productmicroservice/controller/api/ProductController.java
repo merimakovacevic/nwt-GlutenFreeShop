@@ -7,7 +7,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import product.microservice.productmicroservice.controller.response.RestResponse;
+import product.microservice.productmicroservice.controller.dto.CalculatePriceDTO;
+import product.microservice.productmicroservice.dto.model.ProductDetailsDTO;
 import product.microservice.productmicroservice.dto.model.ProductDto;
+import product.microservice.productmicroservice.dto.model.ProductInfoSyncDTO;
+import product.microservice.productmicroservice.interfaces.RatingClient;
+import product.microservice.productmicroservice.model.Product;
+import product.microservice.productmicroservice.repository.ProductRepository;
 import product.microservice.productmicroservice.service.ProductService;
 
 import javax.validation.Valid;
@@ -22,6 +28,10 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
+    private RatingClient ratingClient;
 
     @GetMapping(path="/all")
     @ResponseBody
@@ -66,11 +76,11 @@ public class ProductController {
 
     @PutMapping(path="/update")
     @ResponseBody
-    public ResponseEntity<?> updateProduct(@Valid @RequestBody ProductDto productDto){
-        productService.updateProduct(productDto);
+    public ResponseEntity<?> updateProduct(@Valid @RequestBody Product newProduct, @PathVariable Long productId){
+        productService.updateProduct(newProduct, productId);
         return RestResponse.builder()
                 .status(HttpStatus.OK)
-                .result(productDto)
+                .result(newProduct)
                 .message("Product successfully updated.")
                 .entity();
     }
@@ -83,5 +93,39 @@ public class ProductController {
                 .status(HttpStatus.OK)
                 .result(productDtos)
                 .entity();
+    }
+
+    @GetMapping(path="/{id}/details")
+    public ProductDetailsDTO getProductDetails(@PathVariable(name = "id") Long productId){
+        Product product = productRepository.findById(productId).get();
+
+
+        // napraviti objekat koji u sebi ima lokalno dostupne informacije (u productDB-u)
+
+
+        ProductDetailsDTO productDetailsDTO = new ProductDetailsDTO();
+        productDetailsDTO.setId(product.getId());
+        productDetailsDTO.setName(product.getName());
+        productDetailsDTO.setDescription(product.getDescription());
+        productDetailsDTO.setProductType(product.getProductType().getName());
+
+        // poslati zahtjev ka RatingServisu
+
+        ProductInfoSyncDTO productSyncInfo = ratingClient.getProductSyncInfo(productId);
+
+        // upisati informacije dobijene od rating servisa u productDetailsDTO objekat
+
+        productDetailsDTO.setAverageRating(productSyncInfo.getAverageRating());
+        productDetailsDTO.setNumberOfRatings(productSyncInfo.getNumberOfRatings());
+//        productDetailsDTO.setComments(productSyncInfo.getComments());
+//        productDetailsDTO.setNumberOfComments(productSyncInfo.getComments().size());
+
+        return productDetailsDTO;
+    }
+
+
+    @PostMapping(value = "/calculate-price", produces = "application/json")
+    public Double calculatePrice(@RequestBody CalculatePriceDTO calculatePriceDTO) {
+        return productService.calculatePrice(calculatePriceDTO.getItemInfoList());
     }
 }

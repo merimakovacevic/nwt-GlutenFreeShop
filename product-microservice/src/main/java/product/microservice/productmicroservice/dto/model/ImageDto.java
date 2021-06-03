@@ -15,16 +15,9 @@ import java.util.List;
 @Builder
 @ApiModel
 @AllArgsConstructor
-public class ProductDto implements Serializable {
+    public class ImageDto implements Serializable {
 
-    private String name;
+    private String url;
 
-    private String description;
-
-    private Integer stock;
-
-    private Double price;
-
-    private String productTypeName;
-
+    private Long ProductId;
 }

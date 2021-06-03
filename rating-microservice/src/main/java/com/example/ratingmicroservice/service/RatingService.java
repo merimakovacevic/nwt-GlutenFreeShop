@@ -6,6 +6,7 @@ import com.example.ratingmicroservice.dto.model.AverageRatingDto;
 import com.example.ratingmicroservice.dto.model.ProductDto;
 import com.example.ratingmicroservice.dto.model.RatingDto;
 import com.example.ratingmicroservice.exception.RestResponseException;
+import com.example.ratingmicroservice.controller.client.ProductClient;
 import com.example.ratingmicroservice.model.Product;
 import com.example.ratingmicroservice.model.Rating;
 import com.example.ratingmicroservice.model.User;
@@ -18,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.example.ratingmicroservice.exception.EntityType.*;
@@ -40,7 +42,7 @@ public class RatingService {
     ProductClient productClient;
 
     private Double getAverageRatingOfProduct(Long productId) throws JsonProcessingException {
-        if (containsProduct(productClient.getAllProducts(), productId)) {
+        if (productClient.getProductById(productId) != null) {
             List<Rating> ratings = ratingRepository.findAllByProductId(productId);
             Double ratingsSum = Double.valueOf(0);
 
@@ -65,10 +67,10 @@ public class RatingService {
 
     public RatingDto addRating(RatingDto ratingDto) throws RestResponseException, JsonProcessingException {
         validateProductAndUser(ratingDto.getProductId(), ratingDto.getUserId());
-        Optional<Rating> rating = ratingRepository.findRatingByProductIdAndUserId(ratingDto.getProductId(), ratingDto.getUserId());
-        if (rating.isPresent()) {
-            throw new RestResponseException(HttpStatus.CONFLICT, RATING);
-        }
+//        Optional<Rating> rating = ratingRepository.findRatingByProductIdAndUserId(ratingDto.getProductId(), ratingDto.getUserId());
+//        if (rating.isPresent()) {
+//            throw new RestResponseException(HttpStatus.CONFLICT, RATING);
+//        }
         Rating ratingModel = new Rating()
                 .setRate(ratingDto.getRate())
                 .setProduct(productRepository.save(new Product(ratingDto.getProductId())))
@@ -106,17 +108,31 @@ public class RatingService {
         return ratings;
     }
 
-    private boolean containsProduct(final List<ProductDto> list, final Long id){
-        return list.stream().filter(o -> o.getId().equals(id)).findFirst().isPresent();
-    }
+//    private boolean containsProduct(final List<ProductDto> list, final Long id){
+//        return list.stream().filter(o -> o.getId().equals(id)).findFirst().isPresent();
+//    }
+//
+//    private void validateProductAndUser(Long productId, Long userId) throws RestResponseException {
+//        if (!containsProduct(productClient.getAllProducts(), productId)) {
+//            throw new RestResponseException(HttpStatus.NOT_FOUND, PRODUCT);
+//        }
+//        Optional<User> user = userRepository.findById(userId);
+//        if (user.isEmpty()) {
+//            throw new RestResponseException(HttpStatus.NOT_FOUND, USER);
+//        }
+//    }
 
     private void validateProductAndUser(Long productId, Long userId) throws RestResponseException {
-        if (!containsProduct(productClient.getAllProducts(), productId)) {
+        if (productClient.getProductById(productId) == null) {
             throw new RestResponseException(HttpStatus.NOT_FOUND, PRODUCT);
         }
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isEmpty()) {
-            throw new RestResponseException(HttpStatus.NOT_FOUND, USER);
-        }
+//        Optional<User> user = userRepository.findById(userId);
+//        if (user.isEmpty()) {
+//            throw new RestResponseException(HttpStatus.NOT_FOUND, USER);
+//        }
+    }
+
+    public Map<String, Object> getAverageRatingForProduct(Long productId) {
+        return ratingRepository.getAverageRatingForProduct(productId);
     }
 }

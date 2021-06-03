@@ -1,5 +1,6 @@
 package com.example.ratingmicroservice.controller.client;
 
+import com.example.ratingmicroservice.controller.client.dto.GetProductResponse;
 import com.example.ratingmicroservice.controller.response.RestResponse;
 import com.example.ratingmicroservice.dto.model.ProductDto;
 import com.example.ratingmicroservice.exception.RestResponseException;
@@ -13,6 +14,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.awt.print.Book;
 import java.util.ArrayList;
@@ -37,5 +39,19 @@ public class ProductClient {
         );
 
         return products.getResult();
+    }
+
+    public ProductDto getProductById(Long productId) {
+
+        ResponseEntity<GetProductResponse> response = restTemplate.getForEntity("http://product-microservice/product/" + productId, GetProductResponse.class);
+
+        if (response.getStatusCode().equals(HttpStatus.OK)) {
+            if (response.getBody()!=null) {
+                return response.getBody().getResult();
+            }
+        }
+        return null;
+        //throw new ApiRequestException("Rating service returned error");
+
     }
 }

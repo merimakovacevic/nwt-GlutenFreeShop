@@ -2,9 +2,15 @@ package com.example.ratingmicroservice.controller.api;
 
 import com.example.ratingmicroservice.controller.response.RestResponse;
 import com.example.ratingmicroservice.dto.model.AverageRatingDto;
+import com.example.ratingmicroservice.dto.model.ProductInfoSyncDto;
 import com.example.ratingmicroservice.dto.model.RatingDto;
+import com.example.ratingmicroservice.exception.EntityType;
+import com.example.ratingmicroservice.exception.RestResponseException;
+import com.example.ratingmicroservice.model.Product;
 import com.example.ratingmicroservice.model.Rating;
+import com.example.ratingmicroservice.repository.ProductRepository;
 import com.example.ratingmicroservice.service.RatingService;
+import com.example.ratingmicroservice.service.ReviewService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +22,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -27,6 +36,12 @@ public class RatingController {
 
     @Autowired
     private RatingService ratingService;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private ReviewService reviewService;
 
     @GetMapping
     @ResponseBody
@@ -80,6 +95,50 @@ public class RatingController {
         List<Rating> ratings = ratingService.findAll();
         return new ResponseEntity<>(ratings, HttpStatus.CREATED);
     }
+
+//    @GetMapping(value = "/rating/average")
+//    @ResponseBody
+//    public ResponseEntity<ProductInfoSyncDto> getAverageRatingForProduct(@RequestParam @NotNull(message = "Param productId cannot be empty.") Long productId) {
+//        Product product = productRepository
+//                .findById(productId)
+//                .orElseThrow(() -> new RestResponseException(HttpStatus.NOT_FOUND, EntityType.PRODUCT));
+//
+//
+//        ProductInfoSyncDto productInfoSyncDTO = new ProductInfoSyncDto();
+//
+//        Map<String, Object> ratingInfo = ratingService.getAverageRatingForProduct(productId);
+//
+//        Double averageRating = ((BigDecimal) ratingInfo.get("averageRating")).doubleValue();
+//        Long numberOfRatings = ((BigInteger) ratingInfo.get("numberOfRatings")).longValue();
+//
+//        productInfoSyncDTO.setAverageRating(averageRating);
+//        productInfoSyncDTO.setNumberOfRatings(numberOfRatings);
+//
+//        List<String> comments = reviewService.getCommentsForProduct(product);
+//        productInfoSyncDTO.setComments(comments);
+//
+//        return new ResponseEntity<>(productInfoSyncDTO, HttpStatus.OK);
+//    }
+
+    @GetMapping(value = "/average")
+    @ResponseBody
+    public ResponseEntity<?> getAverageRating(
+            @RequestParam @NotNull(message = "Param productId cannot be empty.") Long productId) throws Exception {
+
+        Map<String, Object> ratingInfo = ratingService.getAverageRatingForProduct(productId);
+        Double averageRating = ((BigDecimal) ratingInfo.get("averageRating")).doubleValue();
+        Long numberOfRatings = ((BigInteger) ratingInfo.get("numberOfRatings")).longValue();
+
+        ProductInfoSyncDto productInfoSyncDTO = new ProductInfoSyncDto();
+        productInfoSyncDTO.setAverageRating(averageRating);
+        productInfoSyncDTO.setNumberOfRatings(numberOfRatings);
+
+        return RestResponse.builder()
+                .status(HttpStatus.OK)
+                .result(productInfoSyncDTO)
+                .entity();
+    }
+
 
     /**
      * message mi je dio iz konfiguracije koji se nalazi na gitu

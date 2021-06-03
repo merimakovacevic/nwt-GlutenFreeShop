@@ -8,6 +8,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import product.microservice.productmicroservice.dto.model.ProductInfoSyncDTO;
 import product.microservice.productmicroservice.exception.ApiRequestException;
+import product.microservice.productmicroservice.interfaces.dto.ProductInfoSyncResponse;
 
 @Component
 public class RatingClient {
@@ -22,10 +23,12 @@ public class RatingClient {
                         .queryParam("productId", productId);
 
 
-        ResponseEntity<ProductInfoSyncDTO> response = restTemplate.getForEntity(uriComponentsBuilder.toUriString(), ProductInfoSyncDTO.class);
+        ResponseEntity<ProductInfoSyncResponse> response = restTemplate.getForEntity(uriComponentsBuilder.toUriString(), ProductInfoSyncResponse.class);
 
         if (response.getStatusCode().equals(HttpStatus.OK)) {
-            return response.getBody();
+            if (response.getBody()!=null) {
+                return response.getBody().getResult();
+            }
         }
 
         throw new ApiRequestException("Rating service returned error");

@@ -1,5 +1,6 @@
-package com.example.ratingmicroservice.dto.model;
+package com.example.ratingmicroservice.controller.client.dto;
 
+import com.example.ratingmicroservice.dto.model.ProductDto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
@@ -17,16 +18,9 @@ import java.util.List;
 @Builder
 @ApiModel
 @AllArgsConstructor
-public class ProductDto implements Serializable {
+public class GetProductResponse implements Serializable {
 
-    private String name;
+    private String status;
 
-    private String description;
-
-    private Integer stock;
-
-    private Double price;
-
-    private String productTypeName;
-
+    private ProductDto result;
 }

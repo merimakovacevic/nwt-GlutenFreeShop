@@ -17,7 +17,6 @@ public class ProductType {
     private Long id;
 
     @NotNull(message="Name should not be null")
-    @UniqueElements
     private String name;
 
     @OneToMany(mappedBy = "productType", cascade = CascadeType.ALL)

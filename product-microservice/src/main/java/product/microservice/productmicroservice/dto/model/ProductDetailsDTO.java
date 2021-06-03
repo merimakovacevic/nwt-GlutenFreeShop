@@ -15,6 +15,6 @@ public class ProductDetailsDTO {
 
     private Double averageRating;
     private Long numberOfRatings;
-    private List<String> comments;
-    private Integer numberOfComments;
+//    private List<String> comments;
+//    private Integer numberOfComments;
 }

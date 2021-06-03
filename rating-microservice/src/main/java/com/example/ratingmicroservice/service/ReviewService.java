@@ -37,7 +37,7 @@ public class ReviewService {
     ProductClient productClient;
 
     public List<ReviewDto> findAllByProductId(Long productId) throws JsonProcessingException {
-        if (!containsProduct(productClient.getAllProducts(), productId)) {
+        if (productClient.getProductById(productId) != null) {
             throw new RestResponseException(HttpStatus.NOT_FOUND, EntityType.PRODUCT);
         }
         if (reviewRepository.findAllByProductId(productId).isEmpty()) {
@@ -62,17 +62,31 @@ public class ReviewService {
         reviewRepository.deleteById(reviewId);
     }
 
-    private boolean containsProduct(final List<ProductDto> list, final Long id){
-        return list.stream().filter(o -> o.getId().equals(id)).findFirst().isPresent();
-    }
+//    private boolean containsProduct(final List<ProductDto> list, final Long id){
+//        return list.stream().filter(o -> o.getId().equals(id)).findFirst().isPresent();
+//    }
+//
+//    private void validateProductAndUser(Long productId, Long userId) throws RestResponseException {
+//        if (!containsProduct(productClient.getAllProducts(), productId)) {
+//            throw new RestResponseException(HttpStatus.NOT_FOUND, PRODUCT);
+//        }
+//        Optional<User> user = userRepository.findById(userId);
+//        if (user.isEmpty()) {
+//            throw new RestResponseException(HttpStatus.NOT_FOUND, USER);
+//        }
+//    }
 
     private void validateProductAndUser(Long productId, Long userId) throws RestResponseException {
-        if (!containsProduct(productClient.getAllProducts(), productId)) {
+        if (productClient.getProductById(productId) == null) {
             throw new RestResponseException(HttpStatus.NOT_FOUND, PRODUCT);
         }
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
             throw new RestResponseException(HttpStatus.NOT_FOUND, USER);
         }
+    }
+
+    public List<String> getCommentsForProduct(Product product) {
+        return reviewRepository.getCommentsForProduct(product);
     }
 }
