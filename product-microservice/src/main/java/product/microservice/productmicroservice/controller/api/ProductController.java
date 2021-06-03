@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import product.microservice.productmicroservice.controller.response.RestResponse;
+import product.microservice.productmicroservice.controller.dto.CalculatePriceDTO;
 import product.microservice.productmicroservice.dto.model.ProductDetailsDTO;
 import product.microservice.productmicroservice.dto.model.ProductDto;
 import product.microservice.productmicroservice.dto.model.ProductInfoSyncDTO;
@@ -120,5 +121,11 @@ public class ProductController {
 //        productDetailsDTO.setNumberOfComments(productSyncInfo.getComments().size());
 
         return productDetailsDTO;
+    }
+
+
+    @PostMapping(value = "/calculate-price", produces = "application/json")
+    public Double calculatePrice(@RequestBody CalculatePriceDTO calculatePriceDTO) {
+        return productService.calculatePrice(calculatePriceDTO.getItemInfoList());
     }
 }
