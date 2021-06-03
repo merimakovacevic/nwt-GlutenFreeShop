@@ -60,44 +60,44 @@ class DemoCommandLineRunner implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
 
-
-        if (userRepository.count()!=0) {
-            return;
-        }
-        User user1 = new User(1L, "User one");
-        userRepository.save(user1);
-
-        User user2 = new User(2L, "User two");
-        userRepository.save(user2);
-
-        Product product1 = new Product(789456L);
-        productRepository.save(product1);
-
-
-
-
-
-        MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
-        map.add("productId", "" + product1.getId());
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, new HttpHeaders());
-
-        String response = restTemplate.postForObject("http://localhost:8084/products", request, String.class);
-
-        System.out.println(response);
-
-        Product product2 = new Product(5000L);
-        productRepository.save(product2);
-
-
-
-
-        MultiValueMap<String, String> map2 = new LinkedMultiValueMap<String, String>();
-        map2.add("productId", "" + product2.getId());
-        HttpEntity<MultiValueMap<String, String>> request2 = new HttpEntity<MultiValueMap<String, String>>(map2, new HttpHeaders());
-
-        String response2 = restTemplate.postForObject("http://localhost:8084/products", request2, String.class);
-
-        System.out.println(response2);
+//
+//        if (userRepository.count()!=0) {
+//            return;
+//        }
+//        User user1 = new User(1L, "User one");
+//        userRepository.save(user1);
+//
+//        User user2 = new User(2L, "User two");
+//        userRepository.save(user2);
+//
+//        Product product1 = new Product(789456L);
+//        productRepository.save(product1);
+//
+//
+//
+//
+//
+//        MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
+//        map.add("productId", "" + product1.getId());
+//        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, new HttpHeaders());
+//
+//        String response = restTemplate.postForObject("http://localhost:8082/products", request, String.class);
+//
+//        System.out.println(response);
+//
+//        Product product2 = new Product(5000L);
+//        productRepository.save(product2);
+//
+//
+//
+//
+//        MultiValueMap<String, String> map2 = new LinkedMultiValueMap<String, String>();
+//        map2.add("productId", "" + product2.getId());
+//        HttpEntity<MultiValueMap<String, String>> request2 = new HttpEntity<MultiValueMap<String, String>>(map2, new HttpHeaders());
+//
+//        String response2 = restTemplate.postForObject("http://localhost:8084/products", request2, String.class);
+//
+//        System.out.println(response2);
 
     }
 }

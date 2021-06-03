@@ -3,9 +3,9 @@ spring:
     name: order-microservice
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3307/OrderDB
+    url: jdbc:mysql://localhost:3306/OrderDB
     username: root
-    password: root
+    password: mysql
   jpa:
     hibernate:
       ddl-auto: update

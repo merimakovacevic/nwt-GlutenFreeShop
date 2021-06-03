@@ -6,7 +6,6 @@ import com.example.orderservice.amqp.event.OrderCreatedEvent;
 import com.example.orderservice.amqp.event.OrderPaymentEvent;
 import com.example.orderservice.controller.dto.OrderRatingDto;
 import com.example.orderservice.controller.dto.OrderRatingItem;
-import com.example.orderservice.grpc.GRPCClientService;
 import com.example.orderservice.interfaces.ProductClient;
 import com.example.orderservice.interfaces.RatingClient;
 import com.example.orderservice.interfaces.dto.product.CalculatePriceDTO;
@@ -28,16 +27,16 @@ public class OrderController {
     private final OrderService orderService;
     private final ItemService itemService;
     private final RatingClient ratingClient;
-    private final GRPCClientService grpcClientService;
+//    private final GRPCClientService grpcClientService;
     private final OrderCreatedSender orderCreatedSender;
     private final ProductClient productClient;
     private final OrderPaymentSender orderPaymentSender;
 
-    public OrderController(OrderService orderService, ItemService itemService, RatingClient ratingClient, GRPCClientService grpcClientService, OrderCreatedSender orderCreatedSender, ProductClient productClient, OrderPaymentSender orderPaymentSender) {
+    public OrderController(OrderService orderService, ItemService itemService, RatingClient ratingClient, OrderCreatedSender orderCreatedSender, ProductClient productClient, OrderPaymentSender orderPaymentSender) {
         this.orderService = orderService;
         this.itemService = itemService;
         this.ratingClient = ratingClient;
-        this.grpcClientService = grpcClientService;
+//        this.grpcClientService = grpcClientService;
         this.orderCreatedSender = orderCreatedSender;
         this.productClient = productClient;
         this.orderPaymentSender = orderPaymentSender;
@@ -51,35 +50,35 @@ public class OrderController {
 
         itemService.saveItems(order.getItems());
 
-        grpcClientService.sendSystemEvent("Order created", "INSERT", "Test User");
+//        grpcClientService.sendSystemEvent("Order created", "INSERT", "Test User");
         return createdOrder;
     }
 
     @GetMapping(value = "/order/{id}")
     public Order getOrderById(@PathVariable Long id) {
         Order order = orderService.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
-        grpcClientService.sendSystemEvent("Get order by id", "READ", "Test User");
+//        grpcClientService.sendSystemEvent("Get order by id", "READ", "Test User");
         return order;
     }
 
     @GetMapping(value = "/order")
     public List<Order> getAllOrders() {
         List<Order> allOrders = orderService.findAll();
-        String eventId = grpcClientService.sendSystemEvent("Get all orders", "READ", "Test User");
-        System.out.println("Event ID returned by sytem-events: " + eventId);
+//        String eventId = grpcClientService.sendSystemEvent("Get all orders", "READ", "Test User");
+//        System.out.println("Event ID returned by sytem-events: " + eventId);
         return allOrders;
     }
 
     @DeleteMapping(value = "/order/{id}")
     public void deleteOrderById(@PathVariable Long id) {
         orderService.deleteById(id);
-        grpcClientService.sendSystemEvent("Order delete by id", "DELETE", "Test User");
+//        grpcClientService.sendSystemEvent("Order delete by id", "DELETE", "Test User");
     }
 
     @GetMapping(value = "/order/by-user/{userId}")
     public List<Order> getAllOrdersByUser(@PathVariable Long userId) {
         List<Order> allOrdersByUser = orderService.findAllOrdersByUser(userId);
-        grpcClientService.sendSystemEvent("Get all orders by user", "READ", "Test User");
+//        grpcClientService.sendSystemEvent("Get all orders by user", "READ", "Test User");
         return allOrdersByUser;
     }
 
@@ -88,7 +87,7 @@ public class OrderController {
         for (OrderRatingItem ratingItem : orderRatingDto.getRatingItems()) {
             ratingClient.addRating(new RatingDto(ratingItem.getProductId(), orderRatingDto.getUserId(), ratingItem.getRating()));
         }
-        grpcClientService.sendSystemEvent("Order rate", "INSERT", "Test User");
+//        grpcClientService.sendSystemEvent("Order rate", "INSERT", "Test User");
     }
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -101,7 +100,7 @@ public class OrderController {
         itemService.saveItems(order.getItems());
 
 
-        grpcClientService.sendSystemEvent("Order created", "INSERT", "Test User");
+//        grpcClientService.sendSystemEvent("Order created", "INSERT", "Test User");
         orderCreatedSender.sendOrderCreatedEvent(order);
         // POSALJI DOGADJAJ DA JE ORDER USPJESNO KREIRAN (KOJI CE PRODUCT SERVICE DA SLUSA KAKO BI SKINUO PROIZVOD SA LAGERA)
 
