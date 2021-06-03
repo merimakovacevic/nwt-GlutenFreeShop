@@ -56,8 +56,7 @@ class ProductControllerTest {
     @Test
     void addNewProduct() throws Exception {
         ProductType type = new ProductType("TestName");
-        Set<Image> images = new HashSet<>();
-        Product product = new Product("NewTestProduct", "This is new webshop product", type, images);
+        Product product = new Product("NewTestProduct", "This is new webshop product", 0, 10.0, type);
         Gson gson = new Gson();
         String json = gson.toJson(product);
 

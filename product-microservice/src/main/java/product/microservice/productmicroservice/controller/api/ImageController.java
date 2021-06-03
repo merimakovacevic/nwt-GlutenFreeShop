@@ -5,10 +5,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import product.microservice.productmicroservice.controller.response.RestResponse;
 import product.microservice.productmicroservice.dto.model.ImageDto;
 import product.microservice.productmicroservice.dto.model.ProductDto;
@@ -37,6 +34,15 @@ public class ImageController {
     @GetMapping(path="/{id}")
     public ResponseEntity<?> getImageById(@PathVariable Long id){
         ImageDto imageDto = imageService.getImageById(id);
+        return RestResponse.builder()
+                .status(HttpStatus.OK)
+                .result(imageDto)
+                .entity();
+    }
+
+    @PostMapping(path="/add")
+    public ResponseEntity<?> addNewImage(@RequestBody ImageDto imageDto){
+        imageService.addNew(imageDto);
         return RestResponse.builder()
                 .status(HttpStatus.OK)
                 .result(imageDto)

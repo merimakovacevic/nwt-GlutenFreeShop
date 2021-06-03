@@ -10,5 +10,4 @@ import java.util.List;
 public class ProductInfoSyncDto {
     private Double averageRating;
     private Long numberOfRatings;
-    private List<String> comments;
 }

@@ -43,17 +43,18 @@ public class ProductService {
             throw new RestResponseException(HttpStatus.BAD_REQUEST, EntityType.PRODUCT_TYPE);
         }
 
-        Product product = productRepository.save(new Product(productDto.getName(), productDto.getDescription(), productType.get(), Set.of()));
+        Product product = productRepository.save(new Product(productDto.getName(), productDto.getDescription(),
+                                                productDto.getStock(), productDto.getPrice(), productType.get()));
 
-        List<String> urls = productDto.getUrls();
-        Set<Image> images = urls.stream().map(url -> {
-            Optional<Image> image = imageRepository.findImageByUrl(url);
-            if (image.isPresent()) {
-                throw new RestResponseException(HttpStatus.CONFLICT, EntityType.IMAGE);
-            }
-            else return imageRepository.save(new Image(url, product));
-        }).collect(Collectors.toSet());
-        product.setImages(images);
+//        List<String> urls = productDto.getUrls();
+//        Set<Image> images = urls.stream().map(url -> {
+//            Optional<Image> image = imageRepository.findImageByUrl(url);
+//            if (image.isPresent()) {
+//                throw new RestResponseException(HttpStatus.CONFLICT, EntityType.IMAGE);
+//            }
+//            else return imageRepository.save(new Image(url, product));
+//        }).collect(Collectors.toSet());
+//        product.setImages(images);
         productRepository.save(product);
 
         return Mapper.toProductDto(product);
@@ -75,28 +76,36 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
-    public ProductDto updateProduct(ProductDto productDto) {
-        Optional<Product> product = productRepository.findById(productDto.getId());
+    public ProductDto updateProduct(Product newProduct, Long productId) {
+        Optional<Product> product = productRepository.findById(productId);
         if (product.isEmpty()) {
             throw new RestResponseException(HttpStatus.NOT_FOUND, EntityType.PRODUCT);
         }
-        Optional<ProductType> productType = productTypeRepository.findProductTypeByName(productDto.getProductTypeName());
+        Long typeId = newProduct.getProductType().getId();
+        if (typeId == null) throw new RestResponseException(HttpStatus.NOT_FOUND, EntityType.PRODUCT_TYPE);
+        Optional<ProductType> productType = productTypeRepository.findById(typeId);
         if (productType.isEmpty()) {
             throw new RestResponseException(HttpStatus.BAD_REQUEST, EntityType.PRODUCT_TYPE);
         }
 
-        imageRepository.deleteAllByProductId(productDto.getId());
-        List<String> urls = productDto.getUrls();
-        Set<Image> images = urls.stream().map(url -> {
-            Optional<Image> image = imageRepository.findImageByUrl(url);
-            if (image.isPresent()) {
-                throw new RestResponseException(HttpStatus.CONFLICT, EntityType.IMAGE);
-            }
-            return imageRepository.save(new Image(url, product.get()));
-        }).collect(Collectors.toSet());
+//        imageRepository.deleteAllByProductId(productId);
+//        List<String> urls = productDto.getUrls();
+//        Set<Image> images = urls.stream().map(url -> {
+//            Optional<Image> image = imageRepository.findImageByUrl(url);
+//            if (image.isPresent()) {
+//                throw new RestResponseException(HttpStatus.CONFLICT, EntityType.IMAGE);
+//            }
+//            return imageRepository.save(new Image(url, product.get()));
+//        }).collect(Collectors.toSet());
 
-        productRepository.save(new Product(productDto.getName(), productDto.getDescription(), productType.get(), images));
-        return productDto;
+        Product productToUpdate = productRepository.findById(productId).get();
+        productToUpdate.setName(newProduct.getName());
+        productToUpdate.setDescription(newProduct.getDescription());
+        productToUpdate.setStock(newProduct.getStock());
+        productToUpdate.setPrice(newProduct.getPrice());
+        productRepository.save(productToUpdate);
+
+        return Mapper.toProductDto(productToUpdate);
     }
 
     public List<ProductDto> findProductsByProductTypeName(String name) {

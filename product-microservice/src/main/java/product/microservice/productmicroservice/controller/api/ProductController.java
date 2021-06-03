@@ -75,11 +75,11 @@ public class ProductController {
 
     @PutMapping(path="/update")
     @ResponseBody
-    public ResponseEntity<?> updateProduct(@Valid @RequestBody ProductDto productDto){
-        productService.updateProduct(productDto);
+    public ResponseEntity<?> updateProduct(@Valid @RequestBody Product newProduct, @PathVariable Long productId){
+        productService.updateProduct(newProduct, productId);
         return RestResponse.builder()
                 .status(HttpStatus.OK)
-                .result(productDto)
+                .result(newProduct)
                 .message("Product successfully updated.")
                 .entity();
     }
@@ -116,8 +116,8 @@ public class ProductController {
 
         productDetailsDTO.setAverageRating(productSyncInfo.getAverageRating());
         productDetailsDTO.setNumberOfRatings(productSyncInfo.getNumberOfRatings());
-        productDetailsDTO.setComments(productSyncInfo.getComments());
-        productDetailsDTO.setNumberOfComments(productSyncInfo.getComments().size());
+//        productDetailsDTO.setComments(productSyncInfo.getComments());
+//        productDetailsDTO.setNumberOfComments(productSyncInfo.getComments().size());
 
         return productDetailsDTO;
     }

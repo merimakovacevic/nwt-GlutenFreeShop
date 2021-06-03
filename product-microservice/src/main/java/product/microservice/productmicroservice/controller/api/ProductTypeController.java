@@ -63,8 +63,8 @@ public class ProductTypeController {
 
     @PutMapping(path="/update")
     @ResponseBody
-    public ResponseEntity<?> updateProductType(@Valid @RequestBody ProductTypeDto productTypeDto){
-        productTypeService.updateProductType(productTypeDto);
+    public ResponseEntity<?> updateProductType(@Valid @RequestBody ProductTypeDto productTypeDto, @PathVariable Long productTypeId){
+        productTypeService.updateProductType(productTypeDto, productTypeId);
         return RestResponse.builder()
                 .status(HttpStatus.OK)
                 .result(productTypeDto)

@@ -1,7 +1,6 @@
 package com.example.ratingmicroservice.exception;
 
 import com.example.ratingmicroservice.controller.response.RestResponse;
-import com.example.systemevents.SystemEventRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

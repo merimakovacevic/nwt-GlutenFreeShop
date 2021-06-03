@@ -44,6 +44,20 @@ public class ImageService {
         return Mapper.toImageDto(image.get());
     }
 
+    public String addNew(ImageDto imageDto){
+        if (imageDto.getProductId() == null) throw new RestResponseException(HttpStatus.BAD_REQUEST, EntityType.IMAGE);
+        Long productId = imageDto.getProductId();
+        if (productId == null) throw new RestResponseException(HttpStatus.BAD_REQUEST, EntityType.IMAGE);
+        Optional<Product> product = productRepository.findById(productId);
+        if (product.isEmpty()) throw new RestResponseException(HttpStatus.NOT_FOUND, EntityType.PRODUCT);
+        if (imageDto.getUrl().equals("") || imageDto.getUrl() == null) throw new RestResponseException(HttpStatus.BAD_REQUEST, EntityType.IMAGE);
+        Image newImage = new Image();
+        newImage.setProduct(product.get());
+        newImage.setUrl(imageDto.getUrl());
+        imageRepository.save(newImage);
+        return "Saved";
+    }
+
     public List<ImageDto> getImageByProductId(Long productId) {
         List<Image> images = imageRepository.findAllByProductId(productId);
         return images.stream().map(Mapper::toImageDto).collect(Collectors.toList());

@@ -36,9 +36,9 @@ zuul:
     user-microservice:
       path: /user-service/**
       serviceId: user-microservice
-    fourth-microservice:
-      path: /fourth-service/**
-      serviceId: fourth-microservice
+    product-microservice:
+      path: /product-service/**
+      serviceId: product-microservice
     fifth-microservice:
       path: /fifth-service/**
       serviceId: fifth-microservice

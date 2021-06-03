@@ -16,7 +16,8 @@ import java.util.List;
 @ApiModel
 @AllArgsConstructor
     public class ImageDto implements Serializable {
-    private Long id;
 
     private String url;
+
+    private Long ProductId;
 }

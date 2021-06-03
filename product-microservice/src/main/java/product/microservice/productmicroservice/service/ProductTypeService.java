@@ -54,8 +54,8 @@ public class ProductTypeService {
         return "Updated";
     }
 
-    public ProductTypeDto updateProductType(ProductTypeDto productTypeDto) {
-        Optional<ProductType> productType = productTypeRepository.findById(productTypeDto.getId());
+    public ProductTypeDto updateProductType(ProductTypeDto productTypeDto, Long productId) {
+        Optional<ProductType> productType = productTypeRepository.findById(productId);
         if (productType.isEmpty()) {
             throw new RestResponseException(HttpStatus.NOT_FOUND, EntityType.PRODUCT_TYPE);
         }

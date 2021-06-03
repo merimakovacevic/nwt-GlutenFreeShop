@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
@@ -29,18 +30,24 @@ public class Product {
     @NotNull(message="Description should not be null")
     private String description;
 
+    @Min(value = 0, message = "Product stock cannot be lower then 0")
+    @NotNull(message="Product stock should not be null")
+    private Integer stock;
+
+    @Min(value = 0, message = "Product price cannot be lower then 0")
+    @NotNull(message="Product price should not be null")
+    private Double price;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "producttype_id")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private ProductType productType;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private Set<Image> images = new HashSet<>();
-
-    public Product(String name, String description, ProductType productType, Set<Image> images){
+    public Product(String name, String description, Integer stock, Double price, ProductType productType){
         this.name = name;
         this.description = description;
+        this.stock = stock;
+        this.price = price;
         this.productType = productType;
-        this.images = images;
     }
 }

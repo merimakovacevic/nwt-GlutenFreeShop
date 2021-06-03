@@ -96,28 +96,47 @@ public class RatingController {
         return new ResponseEntity<>(ratings, HttpStatus.CREATED);
     }
 
-    @GetMapping(value = "/rating/average")
+//    @GetMapping(value = "/rating/average")
+//    @ResponseBody
+//    public ResponseEntity<ProductInfoSyncDto> getAverageRatingForProduct(@RequestParam @NotNull(message = "Param productId cannot be empty.") Long productId) {
+//        Product product = productRepository
+//                .findById(productId)
+//                .orElseThrow(() -> new RestResponseException(HttpStatus.NOT_FOUND, EntityType.PRODUCT));
+//
+//
+//        ProductInfoSyncDto productInfoSyncDTO = new ProductInfoSyncDto();
+//
+//        Map<String, Object> ratingInfo = ratingService.getAverageRatingForProduct(productId);
+//
+//        Double averageRating = ((BigDecimal) ratingInfo.get("averageRating")).doubleValue();
+//        Long numberOfRatings = ((BigInteger) ratingInfo.get("numberOfRatings")).longValue();
+//
+//        productInfoSyncDTO.setAverageRating(averageRating);
+//        productInfoSyncDTO.setNumberOfRatings(numberOfRatings);
+//
+//        List<String> comments = reviewService.getCommentsForProduct(product);
+//        productInfoSyncDTO.setComments(comments);
+//
+//        return new ResponseEntity<>(productInfoSyncDTO, HttpStatus.OK);
+//    }
+
+    @GetMapping(value = "/average")
     @ResponseBody
-    public ResponseEntity<ProductInfoSyncDto> getAverageRatingForProduct(@RequestParam @NotNull(message = "Param productId cannot be empty.") Long productId) {
-        Product product = productRepository
-                .findById(productId)
-                .orElseThrow(() -> new RestResponseException(HttpStatus.NOT_FOUND, EntityType.PRODUCT));
-
-
-        ProductInfoSyncDto productInfoSyncDTO = new ProductInfoSyncDto();
+    public ResponseEntity<?> getAverageRating(
+            @RequestParam @NotNull(message = "Param productId cannot be empty.") Long productId) throws Exception {
 
         Map<String, Object> ratingInfo = ratingService.getAverageRatingForProduct(productId);
-
         Double averageRating = ((BigDecimal) ratingInfo.get("averageRating")).doubleValue();
         Long numberOfRatings = ((BigInteger) ratingInfo.get("numberOfRatings")).longValue();
 
+        ProductInfoSyncDto productInfoSyncDTO = new ProductInfoSyncDto();
         productInfoSyncDTO.setAverageRating(averageRating);
         productInfoSyncDTO.setNumberOfRatings(numberOfRatings);
 
-        List<String> comments = reviewService.getCommentsForProduct(product);
-        productInfoSyncDTO.setComments(comments);
-
-        return new ResponseEntity<>(productInfoSyncDTO, HttpStatus.OK);
+        return RestResponse.builder()
+                .status(HttpStatus.OK)
+                .result(productInfoSyncDTO)
+                .entity();
     }
 
 

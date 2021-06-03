@@ -12,20 +12,19 @@ import java.util.stream.Collectors;
 public class Mapper {
     public static ProductDto toProductDto(Product product) {
         return new ProductDto()
-                .setId(product.getId())
                 .setDescription(product.getDescription())
                 .setName(product.getName())
-                .setUrls(product.getImages().stream().map(image -> image.getUrl()).collect(Collectors.toList()))
+                .setStock(product.getStock())
+                .setPrice(product.getPrice())
                 .setProductTypeName(product.getProductType().getName());
     }
     public static ImageDto toImageDto(Image image) {
         return new ImageDto()
-                .setId(image.getId())
-                .setUrl(image.getUrl());
+                .setUrl(image.getUrl())
+                .setProductId(image.getProduct().getId());
     }
     public static ProductTypeDto toProductTypeDto(ProductType productType) {
         return new ProductTypeDto()
-                .setId(productType.getId())
                 .setName(productType.getName());
     }
 }

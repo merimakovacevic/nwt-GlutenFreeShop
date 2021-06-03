@@ -13,7 +13,6 @@ import lombok.experimental.Accessors;
 @ApiModel
 @AllArgsConstructor
 public class ProductTypeDto {
-    private Long id;
 
     private String name;
 
