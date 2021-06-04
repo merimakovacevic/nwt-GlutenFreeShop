@@ -99,9 +99,7 @@ public class ProductController {
     public ProductDetailsDTO getProductDetails(@PathVariable(name = "id") Long productId){
         Product product = productRepository.findById(productId).get();
 
-
         // napraviti objekat koji u sebi ima lokalno dostupne informacije (u productDB-u)
-
 
         ProductDetailsDTO productDetailsDTO = new ProductDetailsDTO();
         productDetailsDTO.setId(product.getId());

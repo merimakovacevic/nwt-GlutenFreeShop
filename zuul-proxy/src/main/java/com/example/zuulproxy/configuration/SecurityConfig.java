@@ -35,6 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers( GlobalConstants.USER_MICROSERVICE + "/login").permitAll()
                 .antMatchers(GlobalConstants.USER_MICROSERVICE + "/user/all").hasAuthority("ADMIN")
                 .antMatchers(GlobalConstants.PRODUCT_MICROSERVICE + "/product/add").hasAuthority("ADMIN")
+                .antMatchers(GlobalConstants.PRODUCT_MICROSERVICE + "/product/delete/**").hasAuthority("MANAGER")
                 .anyRequest().authenticated()
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));

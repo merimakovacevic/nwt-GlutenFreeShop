@@ -25,5 +25,6 @@ message SystemEventResponse {
 }
 
 service SystemEventService {
+
     rpc register(SystemEventRequest) returns (SystemEventResponse);
 }

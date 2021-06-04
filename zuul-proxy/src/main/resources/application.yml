@@ -52,3 +52,8 @@ ribbon:
 jwt:
   security:
     key: j3H5Ld5nYmGWyULy6xwpOgfSH++NgKXnJMq20vpfd+8=t
+
+grpc:
+  server:
+    host: localhost
+    port: 9090
