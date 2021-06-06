@@ -1,5 +1,6 @@
 package user.microservice.usermicroservice.controller;
 
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,11 +11,11 @@ import user.microservice.usermicroservice.repository.UserRepository;
 import user.microservice.usermicroservice.service.UserService;
 
 import javax.validation.Valid;
-import java.util.Collections;
 import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/user")
+@RefreshScope
 public class UserController {
 
     private final UserRepository userRepository;
