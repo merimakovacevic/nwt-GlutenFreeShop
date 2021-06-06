@@ -15,12 +15,6 @@ public class GRPCClientService {
 
     public String sendSystemEvent(com.example.systemevents.SystemEventRequest.LogType logType, String serviceName,
                                   String userEmail, com.example.systemevents.SystemEventRequest.Action action) {
-        /*
-        Ovaj dio koda je potrebno zakomentarisati, a zatim odraditi mvn clean install u terminalu
-        kako bi se generisale Java klase koje smo definisali u proto fajlu.
-        Staviti na kraju return ""; jer ova metoda vraca string
-        Kad se odradi mvn clean install odkomentarisati i trebalo bi da radi
-        */
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress(grpcHost, grpcPort)
                 .usePlaintext()
