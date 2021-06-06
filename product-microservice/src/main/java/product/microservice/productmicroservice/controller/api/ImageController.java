@@ -12,6 +12,7 @@ import product.microservice.productmicroservice.dto.model.ProductDto;
 import product.microservice.productmicroservice.model.Image;
 import product.microservice.productmicroservice.service.ImageService;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
@@ -46,6 +47,16 @@ public class ImageController {
         return RestResponse.builder()
                 .status(HttpStatus.OK)
                 .result(imageDto)
+                .entity();
+    }
+
+    @GetMapping(path="/product/{productId}")
+    //@ResponseBody
+    public ResponseEntity<?> getProductImagesByProductId(@PathVariable Long productId){
+        List<ImageDto> imageDtos = imageService.getImageByProductId(productId);
+        return RestResponse.builder()
+                .status(HttpStatus.OK)
+                .result(imageDtos)
                 .entity();
     }
 }
