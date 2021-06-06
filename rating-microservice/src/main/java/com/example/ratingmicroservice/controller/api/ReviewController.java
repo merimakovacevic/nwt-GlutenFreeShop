@@ -2,7 +2,6 @@ package com.example.ratingmicroservice.controller.api;
 
 import com.example.ratingmicroservice.dto.model.ReviewDto;
 import com.example.ratingmicroservice.controller.response.RestResponse;
-import com.example.ratingmicroservice.model.Review;
 import com.example.ratingmicroservice.service.ReviewService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.SneakyThrows;
