@@ -4,9 +4,6 @@ import com.example.ratingmicroservice.controller.response.RestResponse;
 import com.example.ratingmicroservice.dto.model.AverageRatingDto;
 import com.example.ratingmicroservice.dto.model.ProductInfoSyncDto;
 import com.example.ratingmicroservice.dto.model.RatingDto;
-import com.example.ratingmicroservice.exception.EntityType;
-import com.example.ratingmicroservice.exception.RestResponseException;
-import com.example.ratingmicroservice.model.Product;
 import com.example.ratingmicroservice.model.Rating;
 import com.example.ratingmicroservice.repository.ProductRepository;
 import com.example.ratingmicroservice.service.RatingService;
@@ -37,11 +34,11 @@ public class RatingController {
     @Autowired
     private RatingService ratingService;
 
-    @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private ReviewService reviewService;
+//    @Autowired
+//    private ProductRepository productRepository;
+//
+//    @Autowired
+//    private ReviewService reviewService;
 
     @GetMapping
     @ResponseBody
@@ -139,12 +136,6 @@ public class RatingController {
                 .entity();
     }
 
-
-    /**
-     * message mi je dio iz konfiguracije koji se nalazi na gitu
-     * Sa anotacijom @Value mogu da pokupim neki property iz konfiga (bilo da se nalazi u application.properties fajlu
-     * ili na git repozitoriju (config serveru)
-     **/
     @Value("${message}")
     private String message;
 

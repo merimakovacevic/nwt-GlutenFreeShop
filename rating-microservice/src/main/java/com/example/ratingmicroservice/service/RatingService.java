@@ -67,10 +67,10 @@ public class RatingService {
 
     public RatingDto addRating(RatingDto ratingDto) throws RestResponseException, JsonProcessingException {
         validateProductAndUser(ratingDto.getProductId(), ratingDto.getUserId());
-//        Optional<Rating> rating = ratingRepository.findRatingByProductIdAndUserId(ratingDto.getProductId(), ratingDto.getUserId());
-//        if (rating.isPresent()) {
-//            throw new RestResponseException(HttpStatus.CONFLICT, RATING);
-//        }
+        Optional<Rating> rating = ratingRepository.findRatingByProductIdAndUserId(ratingDto.getProductId(), ratingDto.getUserId());
+        if (rating.isPresent()) {
+            throw new RestResponseException(HttpStatus.CONFLICT, RATING);
+        }
         Rating ratingModel = new Rating()
                 .setRate(ratingDto.getRate())
                 .setProduct(productRepository.save(new Product(ratingDto.getProductId())))
@@ -126,10 +126,10 @@ public class RatingService {
         if (productClient.getProductById(productId) == null) {
             throw new RestResponseException(HttpStatus.NOT_FOUND, PRODUCT);
         }
-//        Optional<User> user = userRepository.findById(userId);
-//        if (user.isEmpty()) {
-//            throw new RestResponseException(HttpStatus.NOT_FOUND, USER);
-//        }
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            throw new RestResponseException(HttpStatus.NOT_FOUND, USER);
+        }
     }
 
     public Map<String, Object> getAverageRatingForProduct(Long productId) {

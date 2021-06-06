@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: prxy-server
+
+server:
+  port: 9200
+
+zuul:
+  routes:
+    order-microservice:
+      path: /order-service/**
+      serviceId: order-microservice
+      strip-prefix: false
+    rating-microservice:
+      path: /rating-service/**
+      serviceId: rating-microservice
+      strip-prefix: false
+    user-microservice:
+      path: /user-service/**
+      url: http:localhost:8081/
+      strip-prefix: false
+    payment-microservice:
+      path: /payment-service/**
+      serviceId: payment-microservice
+    product-microservice:
+      path: /product-service/**
+      serviceId: product-microservice

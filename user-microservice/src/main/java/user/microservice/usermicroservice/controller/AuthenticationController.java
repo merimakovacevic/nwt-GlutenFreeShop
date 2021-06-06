@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import user.microservice.usermicroservice.authentication.JwtTokenUtil;
+import user.microservice.usermicroservice.controller.dto.model.LoginResponseDTO;
 import user.microservice.usermicroservice.model.User;
 import user.microservice.usermicroservice.repository.UserRepository;
 
@@ -30,7 +31,7 @@ public class AuthenticationController {
     }
 
     @PostMapping(path = "/login")
-    public ResponseEntity<Void> login(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginDTO loginDTO) {
 
 
         final Optional<User> userOptional = userRepository.findByEmail(loginDTO.getEmail());
@@ -48,10 +49,15 @@ public class AuthenticationController {
         final String token = jwtTokenUtil.generateToken(user);
 
         HttpHeaders httpHeaders = new HttpHeaders();
-
         httpHeaders.add("Authorization", "Bearer " + token);
+        httpHeaders.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.AUTHORIZATION);
 
-        return new ResponseEntity<>(httpHeaders, HttpStatus.OK);
+        LoginResponseDTO loginResponseDTO = new LoginResponseDTO()
+                .setEmail(user.getEmail())
+                .setId(user.getId())
+                .setRole(user.getRole().getName());
+
+        return new ResponseEntity<LoginResponseDTO>(loginResponseDTO, httpHeaders, HttpStatus.OK);
     }
 
 

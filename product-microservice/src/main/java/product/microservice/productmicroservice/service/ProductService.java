@@ -3,29 +3,19 @@ package product.microservice.productmicroservice.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import product.microservice.productmicroservice.amqp.event.OrderCreatedEvent;
-import product.microservice.productmicroservice.amqp.event.OrderItemInfo;
-import product.microservice.productmicroservice.controller.dto.CalculatePriceDTO;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import product.microservice.productmicroservice.dto.mapper.Mapper;
 import product.microservice.productmicroservice.dto.model.ProductDto;
 import product.microservice.productmicroservice.exception.ApiRequestException;
 import product.microservice.productmicroservice.exception.EntityType;
 import product.microservice.productmicroservice.exception.RestResponseException;
-import product.microservice.productmicroservice.model.Image;
 import product.microservice.productmicroservice.model.Product;
 import product.microservice.productmicroservice.model.ProductType;
 import product.microservice.productmicroservice.repository.ImageRepository;
 import product.microservice.productmicroservice.repository.ProductRepository;
 import product.microservice.productmicroservice.repository.ProductTypeRepository;
 
-import java.net.URL;
-import java.util.Collection;
-import javax.transaction.Transactional;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -122,58 +112,71 @@ public class ProductService {
         return products.stream().map(Mapper::toProductDto).collect(Collectors.toList());
     }
 
-    public Set<Long> updateStockForItemList(List<OrderItemInfo> itemInfoList) {
-        Set<Long> outOfStockProductIds = new LinkedHashSet<>();
-
-        for (OrderItemInfo orderItemInfo : itemInfoList) {
-            Optional<Product> optProduct = productRepository.findById(orderItemInfo.getProductId());
-
-            if (optProduct.isEmpty() || optProduct.get().getStock() < orderItemInfo.getQuantity()) {
-                outOfStockProductIds.add(orderItemInfo.getProductId());
-            }
+    public List<ProductDto> findProductsByProductNameAndProductTypeName(String productName, String productTypeName) {
+        Optional<ProductType> productType = productTypeRepository.findProductTypeByName(productTypeName);
+        if (productType.isEmpty()) {
+            throw new RestResponseException(HttpStatus.BAD_REQUEST, EntityType.PRODUCT_TYPE);
         }
-
-        if (outOfStockProductIds.isEmpty()) {
-            for (OrderItemInfo orderItemInfo : itemInfoList) {
-                Product product = getById(orderItemInfo.getProductId());
-
-                product.setStock(product.getStock() - orderItemInfo.getQuantity());
-                productRepository.save(product);
-            }
-
-            return outOfStockProductIds;
+        Optional<Product> product = productRepository.findProductByName(productName);
+        if (productType.isEmpty()) {
+            throw new RestResponseException(HttpStatus.BAD_REQUEST, EntityType.PRODUCT);
         }
-
-        return outOfStockProductIds;
+        List<Product> products = productRepository.findAllByNameAndProductTypeName(productName, productTypeName);
+        return products.stream().map(Mapper::toProductDto).collect(Collectors.toList());
     }
 
-    public Double calculatePrice(List<OrderItemInfo> itemInfoList) {
-        double amount = 0.0;
+//    public Set<Long> updateStockForItemList(List<OrderItemInfo> itemInfoList) {
+//        Set<Long> outOfStockProductIds = new LinkedHashSet<>();
+//
+//        for (OrderItemInfo orderItemInfo : itemInfoList) {
+//            Optional<Product> optProduct = productRepository.findById(orderItemInfo.getProductId());
+//
+//            if (optProduct.isEmpty() || optProduct.get().getStock() < orderItemInfo.getQuantity()) {
+//                outOfStockProductIds.add(orderItemInfo.getProductId());
+//            }
+//        }
+//
+//        if (outOfStockProductIds.isEmpty()) {
+//            for (OrderItemInfo orderItemInfo : itemInfoList) {
+//                Product product = getById(orderItemInfo.getProductId());
+//
+//                product.setStock(product.getStock() - orderItemInfo.getQuantity());
+//                productRepository.save(product);
+//            }
+//
+//            return outOfStockProductIds;
+//        }
+//
+//        return outOfStockProductIds;
+//    }
 
-        for (OrderItemInfo orderItemInfo : itemInfoList) {
-            Optional<Product> optionalProduct = productRepository.findById(orderItemInfo.getProductId());
-
-            if (optionalProduct.isEmpty()) {
-                return 0.0;
-            }
-
-            amount += optionalProduct.get().getPrice() * orderItemInfo.getQuantity();
-        }
-
-        return amount;
-    }
-
-    public void returnStock(List<OrderItemInfo> itemInfoList) {
-        for (OrderItemInfo orderItemInfo : itemInfoList) {
-            Optional<Product> optionalProduct = productRepository.findById(orderItemInfo.getProductId());
-
-            if (optionalProduct.isPresent()) {
-                Product product = optionalProduct.get();
-                product.setStock(product.getStock() + orderItemInfo.getQuantity());
-            }
-        }
-
-    }
+//    public Double calculatePrice(List<OrderItemInfo> itemInfoList) {
+//        double amount = 0.0;
+//
+//        for (OrderItemInfo orderItemInfo : itemInfoList) {
+//            Optional<Product> optionalProduct = productRepository.findById(orderItemInfo.getProductId());
+//
+//            if (optionalProduct.isEmpty()) {
+//                return 0.0;
+//            }
+//
+//            amount += optionalProduct.get().getPrice() * orderItemInfo.getQuantity();
+//        }
+//
+//        return amount;
+//    }
+//
+//    public void returnStock(List<OrderItemInfo> itemInfoList) {
+//        for (OrderItemInfo orderItemInfo : itemInfoList) {
+//            Optional<Product> optionalProduct = productRepository.findById(orderItemInfo.getProductId());
+//
+//            if (optionalProduct.isPresent()) {
+//                Product product = optionalProduct.get();
+//                product.setStock(product.getStock() + orderItemInfo.getQuantity());
+//            }
+//        }
+//
+//    }
 
     public Product getById(Long id) {
         Optional<Product> product = productRepository.findById(id);
