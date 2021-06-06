@@ -1,8 +1,11 @@
-package user.microservice.usermicroservice.controller.dto;
+package user.microservice.usermicroservice.controller.dto.model;
+
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,13 +14,13 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDetailsResponseDTO implements Serializable {
+@Builder
+@Accessors(chain = true)
+public class LoginResponseDTO implements Serializable {
 
     private Long id;
 
     private String email;
 
-    private String password;
-
-    private List<String> roles = new ArrayList<>();
+    private String role;
 }

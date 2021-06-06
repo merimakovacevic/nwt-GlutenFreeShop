@@ -22,7 +22,7 @@ public class ProductTypeController {
 
     @GetMapping(path="/all")
     @ResponseBody
-    public ResponseEntity<?> getAllProducts () {
+    public ResponseEntity<?> getAllProductTypes () {
         List<ProductTypeDto> productTypeDtos = productTypeService.getAll();
         return RestResponse.builder()
                 .status(HttpStatus.OK)
@@ -32,7 +32,7 @@ public class ProductTypeController {
 
     @PostMapping(path="/add")
     @ResponseBody
-    public ResponseEntity<?> addNewProduct (@Valid @RequestBody ProductTypeDto productTypeDto){
+    public ResponseEntity<?> addNewProductType (@Valid @RequestBody ProductTypeDto productTypeDto){
         productTypeService.addNewProductType(productTypeDto);
         return RestResponse.builder()
                 .status(HttpStatus.OK)

@@ -5,16 +5,13 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3306/OrderDB
     username: root
-    password: mysql
+    password: Infobip2021!
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5Dialect
-  config:
-    import=optional:configserver:http://localhost:8888/:
-
 eureka:
   client:
     serviceUrl:

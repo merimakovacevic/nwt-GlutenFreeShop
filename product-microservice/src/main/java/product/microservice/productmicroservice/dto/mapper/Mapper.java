@@ -7,8 +7,6 @@ import product.microservice.productmicroservice.model.Image;
 import product.microservice.productmicroservice.model.Product;
 import product.microservice.productmicroservice.model.ProductType;
 
-import java.util.stream.Collectors;
-
 public class Mapper {
     public static ProductDto toProductDto(Product product) {
         return new ProductDto()
@@ -16,7 +14,8 @@ public class Mapper {
                 .setName(product.getName())
                 .setStock(product.getStock())
                 .setPrice(product.getPrice())
-                .setProductTypeName(product.getProductType().getName());
+                .setProductTypeName(product.getProductType().getName())
+                .setProductId(product.getId());
     }
     public static ImageDto toImageDto(Image image) {
         return new ImageDto()

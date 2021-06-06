@@ -3,7 +3,8 @@ package user.microservice.usermicroservice.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import user.microservice.usermicroservice.controller.dto.UserDetailsResponseDTO;
+import user.microservice.usermicroservice.controller.dto.mapper.Mapper;
+import user.microservice.usermicroservice.controller.dto.model.UserDetailsResponseDTO;
 import user.microservice.usermicroservice.model.User;
 import user.microservice.usermicroservice.repository.UserRepository;
 import user.microservice.usermicroservice.service.UserService;
@@ -47,14 +48,7 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        User user = userOptional.get();
-
-        UserDetailsResponseDTO userDetailsResponseDTO = new UserDetailsResponseDTO();
-        userDetailsResponseDTO.setId(user.getId());
-        userDetailsResponseDTO.setEmail(user.getEmail());
-        userDetailsResponseDTO.setPassword(user.getPassword());
-        userDetailsResponseDTO.setRoles(Collections.singletonList(user.getRole().getName()));
-        return ResponseEntity.ok(userDetailsResponseDTO);
+        return ResponseEntity.ok(Mapper.toUserDetailsResponseDTO(userOptional.get()));
     }
 
     @DeleteMapping(path = "/{id}")

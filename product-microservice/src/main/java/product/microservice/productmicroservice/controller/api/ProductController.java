@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import product.microservice.productmicroservice.controller.response.RestResponse;
-import product.microservice.productmicroservice.controller.dto.CalculatePriceDTO;
+//import product.microservice.productmicroservice.controller.dto.CalculatePriceDTO;
 import product.microservice.productmicroservice.dto.model.ProductDetailsDTO;
 import product.microservice.productmicroservice.dto.model.ProductDto;
 import product.microservice.productmicroservice.dto.model.ProductInfoSyncDTO;
@@ -21,7 +21,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
-@RequestMapping(path="/product")
+@RequestMapping(path = "/product")
 @Validated
 @RefreshScope
 public class ProductController {
@@ -33,9 +33,9 @@ public class ProductController {
     @Autowired
     private RatingClient ratingClient;
 
-    @GetMapping(path="/all")
+    @GetMapping(path = "/all")
     @ResponseBody
-    public ResponseEntity<?> getAllProducts () {
+    public ResponseEntity<?> getAllProducts() {
         List<ProductDto> productDtos = productService.getAll();
         return RestResponse.builder()
                 .status(HttpStatus.OK)
@@ -43,9 +43,9 @@ public class ProductController {
                 .entity();
     }
 
-    @PostMapping(path="/add")
+    @PostMapping(path = "/add")
     @ResponseBody
-    public ResponseEntity<?> addNewProduct (@Valid @RequestBody ProductDto productDto){
+    public ResponseEntity<?> addNewProduct(@Valid @RequestBody ProductDto productDto) {
         productService.addNewProduct(productDto);
         return RestResponse.builder()
                 .status(HttpStatus.OK)
@@ -54,9 +54,9 @@ public class ProductController {
                 .entity();
     }
 
-    @GetMapping(path="/{id}")
+    @GetMapping(path = "/{id}")
     @ResponseBody
-    public ResponseEntity<?> getProductById (@NotNull @PathVariable Long id){
+    public ResponseEntity<?> getProductById(@NotNull @PathVariable Long id) {
         ProductDto productDto = productService.getProductById(id);
         return RestResponse.builder()
                 .status(HttpStatus.OK)
@@ -64,9 +64,9 @@ public class ProductController {
                 .entity();
     }
 
-    @DeleteMapping(path="/delete/{id}")
+    @DeleteMapping(path = "/delete/{id}")
     @ResponseBody
-    public ResponseEntity<?> deleteProduct (@PathVariable Long id){
+    public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
         productService.deleteProductById(id);
         return RestResponse.builder()
                 .status(HttpStatus.OK)
@@ -74,9 +74,9 @@ public class ProductController {
                 .entity();
     }
 
-    @PutMapping(path="/update")
+    @PutMapping(path = "/update")
     @ResponseBody
-    public ResponseEntity<?> updateProduct(@Valid @RequestBody Product newProduct, @PathVariable Long productId){
+    public ResponseEntity<?> updateProduct(@Valid @RequestBody Product newProduct, @PathVariable Long productId) {
         productService.updateProduct(newProduct, productId);
         return RestResponse.builder()
                 .status(HttpStatus.OK)
@@ -87,7 +87,7 @@ public class ProductController {
 
     @GetMapping
     @ResponseBody
-    public ResponseEntity<?> getProductsByProductTypeName(@NotNull @RequestParam(name = "productTypeName") String productTypeName){
+    public ResponseEntity<?> getProductsByProductTypeName(@NotNull @RequestParam(name = "productTypeName") String productTypeName) {
         List<ProductDto> productDtos = productService.findProductsByProductTypeName(productTypeName);
         return RestResponse.builder()
                 .status(HttpStatus.OK)
@@ -95,8 +95,19 @@ public class ProductController {
                 .entity();
     }
 
-    @GetMapping(path="/{id}/details")
-    public ProductDetailsDTO getProductDetails(@PathVariable(name = "id") Long productId){
+    @GetMapping("/search")
+    @ResponseBody
+    public ResponseEntity<?> getProductsByProductNameAndProductTypeName(
+            @NotNull @RequestParam(name = "productName") String productName, @NotNull @RequestParam(name = "productTypeName") String productTypeName) {
+        List<ProductDto> productDtos = productService.findProductsByProductNameAndProductTypeName(productName, productTypeName);
+        return RestResponse.builder()
+                .status(HttpStatus.OK)
+                .result(productDtos)
+                .entity();
+    }
+
+    @GetMapping(path = "/{id}/details")
+    public ProductDetailsDTO getProductDetails(@PathVariable(name = "id") Long productId) {
         Product product = productRepository.findById(productId).get();
 
         // napraviti objekat koji u sebi ima lokalno dostupne informacije (u productDB-u)
@@ -121,9 +132,9 @@ public class ProductController {
         return productDetailsDTO;
     }
 
-
-    @PostMapping(value = "/calculate-price", produces = "application/json")
-    public Double calculatePrice(@RequestBody CalculatePriceDTO calculatePriceDTO) {
-        return productService.calculatePrice(calculatePriceDTO.getItemInfoList());
-    }
+//
+//    @PostMapping(value = "/calculate-price", produces = "application/json")
+//    public Double calculatePrice(@RequestBody CalculatePriceDTO calculatePriceDTO) {
+//        return productService.calculatePrice(calculatePriceDTO.getItemInfoList());
+//    }
 }

@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import user.microservice.usermicroservice.controller.dto.mapper.Mapper;
 import user.microservice.usermicroservice.model.User;
 
 import java.io.Serializable;
@@ -23,7 +24,7 @@ public class JwtTokenUtil implements Serializable {
 
         return Jwts.builder()
                 .setClaims(claims)
-                .setIssuer("https://glutten-free-shop.ba")
+                .setIssuer(user.getRole().getName())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() +
                         validityInSeconds*1000))

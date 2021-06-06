@@ -39,9 +39,9 @@ zuul:
     product-microservice:
       path: /product-service/**
       serviceId: product-microservice
-    fifth-microservice:
-      path: /fifth-service/**
-      serviceId: fifth-microservice
+    payment-microservice:
+      path: /payment-service/**
+      serviceId: payment-microservice
   sensitiveHeaders: Cookie,Set-Cookie
 
 ribbon:

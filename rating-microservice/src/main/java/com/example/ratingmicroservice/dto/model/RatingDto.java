@@ -15,8 +15,6 @@ import javax.validation.constraints.NotNull;
 @ToString
 @Builder
 @ApiModel
-//@JsonInclude(value = JsonInclude.Include.NON_NULL)
-//@JsonIgnoreProperties(ignoreUnknown = true)
 public class RatingDto {
     @NotNull(message = "Field 'productId' cannot be empty.")
     private Long productId;
