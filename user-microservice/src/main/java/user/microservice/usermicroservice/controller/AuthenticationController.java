@@ -2,6 +2,7 @@ package user.microservice.usermicroservice.controller;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 @RestController
+@RefreshScope
 public class AuthenticationController {
 
     private final UserRepository userRepository;
