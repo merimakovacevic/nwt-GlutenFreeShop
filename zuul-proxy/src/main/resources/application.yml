@@ -19,9 +19,7 @@ logging:
       springframework:
         web:
           client:
-            RestTemplate=DEBUG:
-
-
+            RestTemplate: DEBUG
 server:
   port: 9200
 
