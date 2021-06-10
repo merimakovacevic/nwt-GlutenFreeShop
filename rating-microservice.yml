@@ -44,5 +44,5 @@ grpc:
     host: localhost
     port: 9090
         
-message: Update Hello from Rating service!!!
+message: Hello from Rating service!!!
 
